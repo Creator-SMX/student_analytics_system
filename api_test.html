@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API测试页面</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { margin-bottom: 20px; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+        .response { border: 1px solid #ccc; padding: 10px; margin-top: 10px; max-height: 400px; overflow-y: auto; background: #f5f5f5; }
+        .status { padding: 5px; border-radius: 3px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>学生消费行为分析系统 API 测试</h1>
+    
+    <div class="container">
+        <h2>1. 登录</h2>
+        <input type="text" id="username" placeholder="用户名" value="admin">
+        <input type="password" id="password" placeholder="密码" value="admin123">
+        <button id="loginBtn">登录</button>
+        <div id="loginStatus" class="status"></div>
+    </div>
+    
+    <div class="container">
+        <h2>2. API 测试</h2>
+        <button id="statusBtn">测试状态API</button>
+        <button id="cardNumbersBtn">测试校园卡号API</button>
+        <button id="statisticsBtn">测试今日统计API</button>
+        <button id="consumptionBtn">测试消费记录API</button>
+        <button id="accessBtn">测试门禁记录API</button>
+        <div id="responseArea" class="response"></div>
+    </div>
+    
+    <script>
+        // 存储登录状态
+        let isLoggedIn = false;
+        
+        // 显示响应
+        function showResponse(title, data, success = true) {
+            const responseArea = document.getElementById('responseArea');
+            const statusClass = success ? 'success' : 'error';
+            
+            responseArea.innerHTML = `
+                <h3>${title}</h3>
+                <div class="status ${statusClass}">状态: ${success ? '成功' : '失败'}</div>
+                <pre>${typeof data === 'string' ? data : JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+        
+        // 登录函数
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginStatus = document.getElementById('loginStatus');
+            
+            try {
+                // 尝试多种登录格式
+                let response;
+                
+                // 尝试JSON格式
+                try {
+                    response = await axios.post('/auth/login', { username, password });
+                } catch (e) {
+                    // 尝试表单格式
+                    response = await axios.post('/auth/login', new URLSearchParams({ username, password }));
+                }
+                
+                isLoggedIn = true;
+                loginStatus.className = 'status success';
+                loginStatus.textContent = '登录成功！';
+                showResponse('登录响应', response.data, true);
+                
+            } catch (error) {
+                isLoggedIn = false;
+                loginStatus.className = 'status error';
+                loginStatus.textContent = '登录失败！';
+                showResponse('登录错误', error.response ? error.response.data : error.message, false);
+            }
+        }
+        
+        // 测试API函数
+        async function testAPI(endpoint, title) {
+            if (!isLoggedIn) {
+                showResponse(title, { error: '请先登录' }, false);
+                return;
+            }
+            
+            try {
+                const response = await axios.get(endpoint);
+                showResponse(title, response.data, true);
+            } catch (error) {
+                showResponse(title, error.response ? error.response.data : error.message, false);
+            }
+        }
+        
+        // 绑定事件监听器
+        document.getElementById('loginBtn').addEventListener('click', login);
+        document.getElementById('statusBtn').addEventListener('click', () => testAPI('/api/status', '状态API测试'));
+        document.getElementById('cardNumbersBtn').addEventListener('click', () => testAPI('/api/card-numbers', '校园卡号API测试'));
+        document.getElementById('statisticsBtn').addEventListener('click', () => testAPI('/api/today-statistics', '今日统计API测试'));
+        document.getElementById('consumptionBtn').addEventListener('click', () => testAPI('/api/consumption-records?page=1&per_page=5', '消费记录API测试'));
+        document.getElementById('accessBtn').addEventListener('click', () => testAPI('/api/access-records?page=1&per_page=5', '门禁记录API测试'));
+        
+        // 页面加载时自动测试状态API
+        window.addEventListener('load', () => {
+            testAPI('/api/status', '状态API测试');
+        });
+    </script>
+</body>
+</html>

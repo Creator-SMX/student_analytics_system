@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生仪表板 - 学生消费行为分析系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        success: '#52C41A',
+                        warning: '#FAAD14',
+                        danger: '#F5222D',
+                        info: '#1890FF',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .sidebar-item-active {
+                @apply bg-primary/10 text-primary border-l-4 border-primary;
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- 左侧Logo和标题 -->
+            <div class="flex items-center space-x-3">
+                <div class="bg-primary text-white p-2 rounded-lg">
+                    <i class="fa fa-user-circle text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-800">学生消费行为分析系统</h1>
+                    <p class="text-xs text-gray-500">学生个人中心</p>
+                </div>
+            </div>
+            
+            <!-- 右侧用户信息和操作 -->
+            <div class="flex items-center space-x-6">
+                <!-- 消息图标 -->
+                <button class="relative p-2 text-gray-600 hover:text-primary transition-all-300">
+                    <i class="fa fa-bell text-lg"></i>
+                </button>
+                
+                <!-- 用户信息 -->
+                <div class="relative group">
+                    <button class="flex items-center space-x-2 text-gray-700 hover:text-primary transition-all-300">
+                        <div class="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center">
+                            <i class="fa fa-user text-primary"></i>
+                        </div>
+                        <span class="font-medium" id="student-name">学生</span>
+                        <i class="fa fa-angle-down text-gray-500"></i>
+                    </button>
+                    
+                    <!-- 下拉菜单 -->
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block transition-all-300">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fa fa-user-circle mr-2"></i>个人信息
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="showChangePasswordModal()">
+                            <i class="fa fa-key mr-2"></i>修改密码
+                        </a>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <a href="javascript:void(0)" class="block px-4 py-2 text-sm text-danger hover:bg-danger/5" onclick="handleLogout()">
+                            <i class="fa fa-sign-out mr-2"></i>退出登录
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 主内容区域 -->
+    <main class="flex flex-1">
+        <!-- 侧边栏 -->
+        <aside class="w-64 bg-white border-r border-gray-200 h-[calc(100vh-64px)] sticky top-[64px] overflow-y-auto">
+            <nav class="py-4">
+                <div class="px-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    个人中心
+                </div>
+                
+                <!-- 菜单项 -->
+                <a href="/student/dashboard" class="flex items-center px-4 py-3 text-gray-700 sidebar-item-active transition-all-300">
+                    <i class="fa fa-home w-6 text-center"></i>
+                    <span class="ml-3">首页</span>
+                </a>
+                
+                <a href="/student/consumption" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-all-300">
+                    <i class="fa fa-shopping-cart w-6 text-center"></i>
+                    <span class="ml-3">我的消费</span>
+                </a>
+                
+                <a href="/student/access" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-all-300">
+                    <i class="fa fa-key w-6 text-center"></i>
+                    <span class="ml-3">门禁记录</span>
+                </a>
+                
+                <a href="/student/statistics" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-all-300">
+                    <i class="fa fa-line-chart w-6 text-center"></i>
+                    <span class="ml-3">消费统计</span>
+                </a>
+                
+                <div class="px-4 mb-2 mt-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    系统功能
+                </div>
+                
+                <a href="/student/reports" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-all-300">
+                    <i class="fa fa-file-text w-6 text-center"></i>
+                    <span class="ml-3">消费报告</span>
+                </a>
+                
+                <a href="/student/settings" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-all-300">
+                    <i class="fa fa-cog w-6 text-center"></i>
+                    <span class="ml-3">个人设置</span>
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- 内容区域 -->
+        <div class="flex-1 p-6">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800" id="welcome-message">欢迎回来</h2>
+                <p class="text-gray-500 mt-1">这是您的个人消费数据概览</p>
+            </div>
+            
+            <!-- 个人信息卡片 -->
+            <div class="bg-white rounded-xl p-6 card-shadow mb-6">
+                <h3 class="font-semibold text-gray-800 mb-4">个人信息</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div>
+                        <p class="text-gray-500 text-sm">学号</p>
+                        <p class="font-medium text-gray-800 mt-1" id="student-card-no">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">姓名</p>
+                        <p class="font-medium text-gray-800 mt-1" id="student-name-detail">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">专业</p>
+                        <p class="font-medium text-gray-800 mt-1" id="student-major">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">年级</p>
+                        <p class="font-medium text-gray-800 mt-1" id="student-grade">--</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 消费统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- 本月消费 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">本月消费</p>
+                            <h3 class="text-3xl font-bold text-gray-800 mt-1">¥0.00</h3>
+                            <p class="text-gray-500 text-xs mt-2">
+                                <i class="fa fa-calendar mr-1"></i> 本月累计
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                            <i class="fa fa-credit-card text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 消费次数 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">消费次数</p>
+                            <h3 class="text-3xl font-bold text-gray-800 mt-1">0</h3>
+                            <p class="text-gray-500 text-xs mt-2">
+                                <i class="fa fa-refresh mr-1"></i> 本月累计
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center text-success">
+                            <i class="fa fa-shopping-bag text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 平均消费 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">平均消费</p>
+                            <h3 class="text-3xl font-bold text-gray-800 mt-1">¥0.00</h3>
+                            <p class="text-gray-500 text-xs mt-2">
+                                <i class="fa fa-calculator mr-1"></i> 每次消费
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center text-warning">
+                            <i class="fa fa-line-chart text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 最近消费记录 -->
+            <div class="bg-white rounded-xl p-6 card-shadow mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-semibold text-gray-800">最近消费记录</h3>
+                    <a href="/student/consumption" class="text-primary text-sm hover:underline">查看全部</a>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    消费时间
+                                </th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    消费金额
+                                </th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    消费地点
+                                </th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    消费类型
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- 表格行数据将通过JavaScript动态加载 -->
+                            <tr>
+                                <td colspan="4" class="px-6 py-10 text-center text-gray-500">
+                                    <i class="fa fa-spinner fa-spin text-2xl mb-2"></i>
+                                    <p>加载最近消费数据...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 消费分析图表 -->
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">我的消费分析</h3>
+                    <div class="text-sm text-gray-500">近6个月</div>
+                </div>
+                <div class="h-72 bg-gray-50 rounded-lg flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fa fa-area-chart text-4xl text-gray-300 mb-2"></i>
+                        <p class="text-gray-500">图表加载中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-gray-200 py-4">
+        <div class="container mx-auto px-4 text-center text-sm text-gray-500">
+            <p>© 2024 学生消费行为分析系统 - 学生个人中心</p>
+        </div>
+    </footer>
+    
+    <!-- 修改密码模态框 -->
+    <div id="change-password-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl w-full max-w-md p-6 mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">修改密码</h3>
+                <button class="text-gray-400 hover:text-gray-600" onclick="hideChangePasswordModal()">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="change-password-form" onsubmit="handleChangePassword(event)">
+                <div class="mb-4">
+                    <label for="current-password" class="block text-sm font-medium text-gray-700 mb-1">
+                        当前密码
+                    </label>
+                    <input 
+                        type="password" 
+                        id="current-password" 
+                        name="current-password" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all-300"
+                        placeholder="请输入当前密码" 
+                        required
+                    >
+                </div>
+                
+                <div class="mb-4">
+                    <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1">
+                        新密码
+                    </label>
+                    <input 
+                        type="password" 
+                        id="new-password" 
+                        name="new-password" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all-300"
+                        placeholder="请输入新密码" 
+                        required
+                    >
+                </div>
+                
+                <div class="mb-6">
+                    <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">
+                        确认新密码
+                    </label>
+                    <input 
+                        type="password" 
+                        id="confirm-password" 
+                        name="confirm-password" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all-300"
+                        placeholder="请再次输入新密码" 
+                        required
+                    >
+                </div>
+                
+                <div class="flex space-x-3">
+                    <button 
+                        type="button" 
+                        class="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all-300"
+                        onclick="hideChangePasswordModal()"
+                    >
+                        取消
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="flex-1 bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-lg font-medium transition-all-300"
+                    >
+                        确认修改
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 显示修改密码模态框
+        function showChangePasswordModal() {
+            document.getElementById('change-password-modal').classList.remove('hidden');
+        }
+        
+        // 隐藏修改密码模态框
+        function hideChangePasswordModal() {
+            document.getElementById('change-password-modal').classList.add('hidden');
+            document.getElementById('change-password-form').reset();
+        }
+        
+        // 处理修改密码
+        async function handleChangePassword(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            // 验证密码
+            if (newPassword !== confirmPassword) {
+                alert('两次输入的新密码不一致');
+                return;
+            }
+            
+            // TODO: 调用API修改密码
+            alert('密码修改功能开发中');
+            hideChangePasswordModal();
+        }
+        
+        // 退出登录处理
+        async function handleLogout() {
+            try {
+                const response = await fetch('/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = '/login';
+                } else {
+                    alert('退出失败，请稍后重试');
+                }
+            } catch (error) {
+                console.error('退出登录失败:', error);
+                alert('退出失败，请稍后重试');
+            }
+        }
+        
+        // 获取学生信息并填充页面
+        function loadStudentInfo() {
+            // TODO: 从会话或API获取学生信息
+            // 这里使用模拟数据
+            const studentInfo = {
+                card_no: '19836314',
+                name: '张三',
+                major: '计算机科学与技术',
+                grade: '2021级'
+            };
+            
+            // 填充页面信息
+            if (studentInfo) {
+                document.getElementById('student-name').textContent = studentInfo.name;
+                document.getElementById('student-name-detail').textContent = studentInfo.name;
+                document.getElementById('student-card-no').textContent = studentInfo.card_no;
+                document.getElementById('student-major').textContent = studentInfo.major;
+                document.getElementById('student-grade').textContent = studentInfo.grade;
+                document.getElementById('welcome-message').textContent = `欢迎回来，${studentInfo.name}`;
+            }
+        }
+        
+        // 检查登录状态
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/auth/check_login');
+                const result = await response.json();
+                
+                if (!result.logged_in || result.user_type !== 'student') {
+                    window.location.href = '/login';
+                } else {
+                    // 加载学生信息
+                    loadStudentInfo();
+                }
+            } catch (error) {
+                console.error('检查登录状态失败:', error);
+                window.location.href = '/login';
+            }
+        }
+        
+        // 页面加载时执行
+        window.addEventListener('DOMContentLoaded', checkLoginStatus);
+    </script>
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生消费行为聚类详细分析</title>
+    <!-- 引入ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 引入Ant Design CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.10.3/dist/reset.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        .header h1 {
+            color: #1890ff;
+            font-size: 32px;
+            margin: 0 0 16px 0;
+            font-weight: 600;
+        }
+        .header .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+        }
+        .chart-container {
+            margin-bottom: 40px;
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 24px;
+        }
+        .chart-wrapper {
+            width: 100%;
+            height: 500px;
+        }
+        .threshold-info {
+            background-color: #f0f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        .threshold-info h3 {
+            color: #1890ff;
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .threshold-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        .threshold-item {
+            background-color: white;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #1890ff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .threshold-item h4 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .threshold-item .range {
+            color: #1890ff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .data-summary {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        .data-summary h3 {
+            color: #52c41a;
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .summary-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+        }
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #52c41a;
+            margin: 0 0 8px 0;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+        .legend-info {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e8e8e8;
+        }
+        .legend-info h3 {
+            color: #333;
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .legend-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #fafafa;
+            border-radius: 16px;
+            font-size: 14px;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .chart-wrapper {
+                height: 400px;
+            }
+            .threshold-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 学生消费行为聚类详细分析</h1>
+            <p class="subtitle">基于正确阈值标准的消费群体划分与可视化</p>
+        </div>
+        
+        <div class="data-summary">
+            <h3>📊 数据概览</h3>
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <p class="stat-number">8,581</p>
+                    <p class="stat-label">总消费人数</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-number">5</p>
+                    <p class="stat-label">消费类型</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-number">100%</p>
+                    <p class="stat-label">数据覆盖率</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-number">100%</p>
+                    <p class="stat-label">去重计数</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="threshold-info">
+            <h3>🎯 聚类阈值标准</h3>
+            <div class="threshold-grid">
+                <div class="threshold-item">
+                    <h4>节约型</h4>
+                    <div class="range">月消费 < 122.90 元</div>
+                </div>
+                <div class="threshold-item">
+                    <h4>极简型</h4>
+                    <div class="range">月消费 122.90 - 196.65 元</div>
+                </div>
+                <div class="threshold-item">
+                    <h4>普通型</h4>
+                    <div class="range">月消费 196.65 - 294.97 元</div>
+                </div>
+                <div class="threshold-item">
+                    <h4>活跃型</h4>
+                    <div class="range">月消费 294.97 - 491.62 元</div>
+                </div>
+                <div class="threshold-item">
+                    <h4>土豪型</h4>
+                    <div class="range">月消费 ≥ 491.62 元</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="chart-title">📈 学生消费行为聚类分布</h2>
+            <div id="clusterChart" class="chart-wrapper"></div>
+        </div>
+        
+        <div class="legend-info">
+            <h3>🔍 聚类说明</h3>
+            <div class="legend-list">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #5470C6;"></div>
+                    <span>节约型: 2,383人 (27.8%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #91CC75;"></div>
+                    <span>极简型: 1,313人 (15.3%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #FAC858;"></div>
+                    <span>普通型: 1,885人 (22.0%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #EE6666;"></div>
+                    <span>活跃型: 2,425人 (28.3%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #73C0DE;"></div>
+                    <span>土豪型: 575人 (6.7%)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 正确的聚类数据
+        const clusterData = {
+            counts: [2383, 1313, 1885, 2425, 575],
+            labels: ['节约型', '极简型', '普通型', '活跃型', '土豪型'],
+            percentages: [27.8, 15.3, 22.0, 28.3, 6.7],
+            total_consumers: 8581
+        };
+        
+        // 颜色配置
+        const colors = ['#5470C6', '#91CC75', '#FAC858', '#EE6666', '#73C0DE'];
+        
+        // 初始化ECharts实例
+        const chartDom = document.getElementById('clusterChart');
+        const myChart = echarts.init(chartDom);
+        
+        // 准备饼图数据
+        const pieData = clusterData.labels.map((label, index) => ({
+            value: clusterData.counts[index],
+            name: `${label}\n${clusterData.counts[index]}人 (${clusterData.percentages[index]}%)`,
+            label: {
+                show: true,
+                formatter: '{b}',
+                fontSize: 14
+            }
+        }));
+        
+        // 配置选项
+        const option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: function(params) {
+                    const index = clusterData.labels.indexOf(params.name.split('\n')[0]);
+                    const label = clusterData.labels[index];
+                    const count = clusterData.counts[index];
+                    const percentage = clusterData.percentages[index];
+                    let threshold = '';
+                    
+                    // 添加阈值信息
+                    switch(label) {
+                        case '节约型':
+                            threshold = '< 122.90 元';
+                            break;
+                        case '极简型':
+                            threshold = '122.90 - 196.65 元';
+                            break;
+                        case '普通型':
+                            threshold = '196.65 - 294.97 元';
+                            break;
+                        case '活跃型':
+                            threshold = '294.97 - 491.62 元';
+                            break;
+                        case '土豪型':
+                            threshold = '≥ 491.62 元';
+                            break;
+                    }
+                    
+                    return `
+                        <div style="padding: 8px;">
+                            <div style="font-weight: bold; margin-bottom: 4px;">${label}</div>
+                            <div>人数: <span style="color: #1890ff;">${count.toLocaleString()}</span></div>
+                            <div>占比: <span style="color: #1890ff;">${percentage}%</span></div>
+                            <div>阈值: <span style="color: #52c41a;">${threshold}</span></div>
+                        </div>
+                    `;
+                },
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderColor: '#e8e8e8',
+                borderWidth: 1,
+                textStyle: {
+                    color: '#333'
+                },
+                padding: 12,
+                borderRadius: 4,
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+            },
+            legend: {
+                orient: 'vertical',
+                right: '10%',
+                top: 'center',
+                formatter: function(name) {
+                    const index = clusterData.labels.indexOf(name.split('\n')[0]);
+                    if (index !== -1) {
+                        return `${clusterData.labels[index]}: ${clusterData.counts[index].toLocaleString()}人`;
+                    }
+                    return name;
+                },
+                textStyle: {
+                    color: '#666',
+                    fontSize: 14
+                },
+                itemWidth: 14,
+                itemHeight: 14,
+                itemGap: 16
+            },
+            series: [
+                {
+                    name: '消费群体',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    center: ['40%', '50%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 8,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: true,
+                        position: 'outside',
+                        formatter: '{b}',
+                        fontSize: 14,
+                        fontWeight: 'normal',
+                        color: '#666'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: 16,
+                            fontWeight: 'bold',
+                            color: '#1890ff'
+                        },
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.3)'
+                        }
+                    },
+                    labelLine: {
+                        show: true,
+                        length: 20,
+                        length2: 10,
+                        lineStyle: {
+                            color: '#e8e8e8'
+                        }
+                    },
+                    data: pieData,
+                    color: colors
+                }
+            ],
+            animation: true,
+            animationType: 'scale',
+            animationEasing: 'elasticOut',
+            animationDelay: function(idx) {
+                return Math.random() * 200;
+            }
+        };
+        
+        // 设置图表选项
+        myChart.setOption(option);
+        
+        // 响应式处理
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
+        
+        // 添加交互效果
+        myChart.on('click', function(params) {
+            console.log('点击了:', params.name, '人数:', params.value);
+        });
+        
+        // 数据验证信息
+        console.log('=== 聚类数据验证 ===');
+        console.log('总消费人数:', clusterData.total_consumers);
+        console.log('聚类总和:', clusterData.counts.reduce((a, b) => a + b, 0));
+        console.log('差异:', clusterData.total_consumers - clusterData.counts.reduce((a, b) => a + b, 0));
+        console.log('百分比总和:', clusterData.percentages.reduce((a, b) => a + b, 0).toFixed(1) + '%');
+    </script>
+</body>
+</html>

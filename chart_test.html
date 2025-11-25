@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图表测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+        
+        .chart-container {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-6">图表测试页面</h1>
+        
+        <!-- 消费趋势图表 -->
+        <div class="mb-8 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold mb-4">消费趋势图表</h2>
+            <div class="chart-container">
+                <canvas id="consumptionTrendChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- 消费分类饼图 -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold mb-4">消费分类饼图</h2>
+            <div class="chart-container">
+                <canvas id="consumptionCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 渲染消费趋势图表
+        function renderConsumptionTrendChart() {
+            const ctx = document.getElementById('consumptionTrendChart').getContext('2d');
+            
+            // 模拟数据 - 近12个月的消费数据
+            const labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+            const data = [72000, 68000, 81000, 85000, 78000, 82000, 76000, 79000, 92000, 95000, 90000, 93000];
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '消费金额 (元)',
+                        data: data,
+                        borderColor: '#165DFF',
+                        backgroundColor: 'rgba(22, 93, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `消费金额: ¥${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '¥' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 渲染消费分类饼图
+        function renderConsumptionCategoryChart() {
+            const ctx = document.getElementById('consumptionCategoryChart').getContext('2d');
+            
+            // 模拟数据 - 消费分类
+            const labels = ['食堂', '超市', '水果店', '奶茶店', '其他'];
+            const data = [65, 15, 10, 5, 5];
+            const colors = [
+                '#165DFF',
+                '#36CFC9', 
+                '#52C41A',
+                '#FAAD14',
+                '#F5222D'
+            ];
+            
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${percentage}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 页面加载时初始化图表
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('页面加载完成，开始渲染图表...');
+            renderConsumptionTrendChart();
+            renderConsumptionCategoryChart();
+            console.log('图表渲染完成');
+        });
+    </script>
+</body>
+</html>

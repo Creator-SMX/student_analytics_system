@@ -1,0 +1,26 @@
+{
+  "connection_pool": [
+    {
+      "status": "success",
+      "message": "连接池稳定性测试通过"
+    }
+  ],
+  "data_consistency": [
+    {
+      "status": "success",
+      "message": "数据一致性测试通过"
+    }
+  ],
+  "chart_data": [
+    {
+      "status": "success",
+      "message": "图表数据计算准确性测试通过"
+    }
+  ],
+  "concurrent_performance": [
+    {
+      "status": "success",
+      "message": "并发测试通过: 5 个请求同时执行成功"
+    }
+  ]
+}

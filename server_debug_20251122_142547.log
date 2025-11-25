@@ -1,0 +1,6 @@
+2025-11-22 14:25:50,026 - test_server - INFO - 初始化Flask应用...
+2025-11-22 14:25:50,029 - test_server - CRITICAL - 服务器启动失败: 'Flask' object has no attribute 'before_first_request'
+Traceback (most recent call last):
+  File "D:\Pycharm\PcData\student_analytics_system\test_server_with_debug.py", line 72, in <module>
+    @app.before_first_request
+AttributeError: 'Flask' object has no attribute 'before_first_request'

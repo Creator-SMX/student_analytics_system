@@ -1,0 +1,85 @@
+=== 数据库连接测试开始 ===
+✅ 数据库连接成功！
+数据库中的表数量: 9
+- 表名: access_records
+  字段数量: 7
+  - id: bigint
+  - access_card_no: varchar(20)
+  - date_time: datetime
+  - address: varchar(200)
+  - access: int
+  - describe_text: varchar(200)
+  - created_at: timestamp
+  记录数量: 43156
+- 表名: admins
+  字段数量: 8
+  - id: int
+  - username: varchar(50)
+  - password: varchar(255)
+  - name: varchar(100)
+  - role: varchar(50)
+  - status: tinyint
+  - created_at: timestamp
+  - updated_at: timestamp
+  记录数量: 1
+- 表名: consumption_clusters
+  字段数量: 5
+  - id: int
+  - category: varchar(50)
+  - count: int
+  - percentage: double
+  - created_at: timestamp
+  记录数量: 5
+- 表名: consumption_records
+  字段数量: 11
+  - id: bigint
+  - card_no: varchar(20)
+  - peo_no: varchar(20)
+  - date_time: datetime
+  - money: decimal(10,2)
+  - term_no: varchar(20)
+  - term_ser_no: varchar(20)
+  - con_oper_no: varchar(20)
+  - oper_no: varchar(20)
+  - dept: varchar(100)
+  - created_at: timestamp
+  记录数量: 519367
+- 表名: students
+  字段数量: 8
+  - id: int
+  - card_no: varchar(20)
+  - sex: varchar(10)
+  - major: varchar(100)
+  - access_card_no: varchar(20)
+  - password: varchar(255)
+  - created_at: timestamp
+  - updated_at: timestamp
+  记录数量: 4339
+- 表名: v_access_pattern
+  字段数量: 2
+  - h: int
+  - cnt: bigint
+  记录数量: 24
+- 表名: v_cluster_input
+  字段数量: 4
+  - id: int
+  - card_no: varchar(20)
+  - mon_amount: decimal(32,2)
+  - mon_cnt: bigint
+  记录数量: 4339
+- 表名: v_time_analysis
+  字段数量: 2
+  - h: int
+  - amt: decimal(32,2)
+  记录数量: 24
+- 表名: vw_consumption_clusters
+  字段数量: 4
+  - labels: text
+  - counts: text
+  - percentages: text
+  - total_students: decimal(32,0)
+  记录数量: 1
+
+✅ 数据库连接已关闭
+
+=== 数据库连接测试结束 ===

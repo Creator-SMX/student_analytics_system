@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错误 - 学生消费行为分析系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        info: '#86909C',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter">
+    <div class="min-h-screen flex flex-col">
+        <!-- 顶部导航栏 -->
+        <header class="bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa fa-bar-chart text-primary text-2xl"></i>
+                    <span class="text-xl font-bold text-gray-800">学生消费行为分析系统</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/admin/dashboard" class="text-gray-600 hover:text-primary transition-colors">
+                        <i class="fa fa-home mr-1"></i> 首页
+                    </a>
+                    <a href="/auth/logout" class="text-gray-600 hover:text-primary transition-colors">
+                        <i class="fa fa-sign-out mr-1"></i> 退出登录
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区 -->
+        <main class="flex-grow flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg card-shadow p-8 max-w-md w-full">
+                <div class="text-center">
+            <!-- 错误图标根据错误类型变化 -->
+            <div class="inline-flex items-center justify-center p-5 mb-4">
+                {% if error_code == 404 %}
+                <i class="fa fa-search-minus bg-blue-100 text-blue-500 text-4xl p-4 rounded-full"></i>
+                {% elif error_code == 403 %}
+                <i class="fa fa-lock bg-yellow-100 text-yellow-500 text-4xl p-4 rounded-full"></i>
+                {% elif error_code == 500 %}
+                <i class="fa fa-exclamation-triangle bg-red-100 text-red-500 text-4xl p-4 rounded-full"></i>
+                {% else %}
+                <i class="fa fa-question-circle bg-gray-100 text-gray-500 text-4xl p-4 rounded-full"></i>
+                {% endif %}
+            </div>
+            
+            <!-- 错误标题 -->
+            <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-800 mb-2">
+                {% if error_code == 404 %}页面不存在{% elif error_code == 403 %}访问受限{% elif error_code == 500 %}服务器错误{% else %}操作失败{% endif %}
+            </h2>
+            
+            <!-- 错误码 -->
+            <div class="text-xl text-gray-500 mb-4">错误码: {{ error_code|default('未知') }}</div>
+            
+            <!-- 错误消息 -->
+            <p class="text-gray-600 mb-4 px-4">{{ error_message|default('发生了一些错误，请稍后重试') }}</p>
+            
+            <!-- 帮助提示 -->
+            <p class="text-sm text-gray-500 mb-6 max-w-md mx-auto">
+                {% if error_code == 404 %}请检查URL是否正确，或返回首页重新导航。{% elif error_code == 403 %}请确认您有足够权限访问此页面，或联系管理员。{% elif error_code == 500 %}服务器遇到了问题，请稍后再试，或联系技术支持。{% else %}如果问题持续，请联系管理员获取帮助。{% endif %}
+            </p>
+            
+            <!-- 操作按钮 -->
+            <div class="flex flex-col sm:flex-row justify-center gap-3">
+                <a href="/admin/dashboard" class="inline-flex items-center justify-center px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+                    <i class="fa fa-home mr-2"></i> 返回首页
+                </a>
+                <button onclick="window.history.back()" class="inline-flex items-center justify-center px-6 py-2 bg-secondary text-white rounded-md hover:bg-secondary/90 transition-colors">
+                    <i class="fa fa-arrow-left mr-2"></i> 返回上一页
+                </button>
+            </div>
+        </div>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="bg-white border-t border-gray-200 py-4">
+            <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+                <p>© 2024 学生消费行为分析系统 - 保留所有权利</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

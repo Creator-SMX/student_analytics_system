@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>门禁记录 - 学生消费行为分析系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        info: '#86909C',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            .sidebar-item-active {
+                @apply bg-primary/10 text-primary border-l-4 border-primary;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-inter text-gray-800">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="p-4 border-b">
+                <div class="flex items-center space-x-3">
+                    <i class="fa fa-bar-chart text-primary text-2xl"></i>
+                    <span class="text-lg font-bold">学生消费行为分析系统</span>
+                </div>
+            </div>
+            <div class="py-4">
+                <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    管理控制台
+                </div>
+                <a href="/admin/dashboard"
+                    class="group flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                    <i class="fa fa-tachometer w-5 h-5 text-gray-400 group-hover:text-primary transition-colors"></i>
+                    <span class="ml-3">仪表盘</span>
+                </a>
+                <a href="/admin/students"
+                    class="group flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                    <i class="fa fa-users w-5 h-5 text-gray-400 group-hover:text-primary transition-colors"></i>
+                    <span class="ml-3">学生管理</span>
+                </a>
+                <a href="/admin/consumption"
+                    class="group flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                    <i class="fa fa-shopping-cart w-5 h-5 text-gray-400 group-hover:text-primary transition-colors"></i>
+                    <span class="ml-3">消费记录</span>
+                </a>
+                <a href="/admin/access"
+                    class="sidebar-item-active group flex items-center px-4 py-3 text-sm font-medium">
+                    <i class="fa fa-door-open w-5 h-5 transition-colors"></i>
+                    <span class="ml-3">门禁记录</span>
+                </a>
+            </div>
+            <div class="absolute bottom-0 w-64 border-t p-4">
+                <div class="flex items-center">
+                    <img src="https://picsum.photos/id/1005/40/40" alt="管理员头像" class="w-10 h-10 rounded-full">
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">{{ session.get('username', '管理员') }}</p>
+                        <p class="text-xs text-gray-500">管理员</p>
+                    </div>
+                    <a href="/auth/logout" class="ml-auto text-gray-400 hover:text-danger transition-colors">
+                        <i class="fa fa-sign-out"></i>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航 -->
+            <header class="bg-white shadow-sm">
+                <div class="px-6 py-3 flex items-center justify-between">
+                    <h1 class="text-xl font-bold">门禁记录</h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <input type="text" placeholder="搜索..."
+                                class="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                            <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <i class="fa fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 内容容器 -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- 筛选和搜索区域 -->
+                <div class="bg-white rounded-lg card-shadow p-4 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">门禁卡号</label>
+                            <input type="text" id="card-no" placeholder="请输入或选择门禁卡号"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                list="card-numbers-list">
+                            <datalist id="card-numbers-list">
+                                <!-- 门禁卡号选项将通过JavaScript动态加载 -->
+                            </datalist>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">访问日期范围</label>
+                            <input type="date" id="date-range-start"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">至</label>
+                            <input type="date" id="date-range-end"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">门禁位置</label>
+                            <select id="access-location"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                <option value="">全部</option>
+                                <option value="第一教学楼">第一教学楼</option>
+                                <option value="第二教学楼">第二教学楼</option>
+                                <option value="第三教学楼">第三教学楼</option>
+                                <option value="学生公寓">学生公寓</option>
+                                <option value="食堂">食堂</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">访问类型</label>
+                            <select id="access-type"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                <option value="">全部</option>
+                                <option value="1">允许</option>
+                                <option value="0">禁止</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <div class="flex space-x-2 w-full">
+                                <button id="search-btn"
+                                    class="flex-1 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+                                    <i class="fa fa-search mr-2"></i> 搜索
+                                </button>
+                                <button id="reset-btn"
+                                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                                    <i class="fa fa-refresh mr-2"></i> 重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white rounded-lg card-shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">今日访问总次数</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1" id="total-access-count">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                <i class="fa fa-sign-in text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-success"><i class="fa fa-arrow-up mr-1"></i>0.00%</span>
+                            <span class="text-gray-500 ml-2">较昨日</span>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg card-shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">今日访问人次</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1" id="unique-users-count">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center">
+                                <i class="fa fa-users text-secondary text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-success"><i class="fa fa-arrow-up mr-1"></i>0.00%</span>
+                            <span class="text-gray-500 ml-2">较昨日</span>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg card-shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">禁止通行次数</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1" id="forbidden-count">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-danger/10 flex items-center justify-center">
+                                <i class="fa fa-exclamation-circle text-danger text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-danger"><i class="fa fa-arrow-up mr-1"></i>0.00%</span>
+                            <span class="text-gray-500 ml-2">较昨日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 门禁记录表格 -->
+                <div class="bg-white rounded-lg card-shadow overflow-hidden">
+                    <div class="p-4 border-b flex justify-between items-center">
+                        <h2 class="text-lg font-semibold">门禁记录列表</h2>
+                        <div class="flex space-x-2">
+                            <button
+                                class="px-3 py-1 border border-gray-300 text-sm rounded-md hover:bg-gray-50 transition-colors">
+                                <i class="fa fa-download mr-1"></i> 导出数据
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        门禁卡号</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        访问时间</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        门禁位置</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        访问类型</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        访问状态</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="access-table-body">
+                                <!-- 表格数据将通过JavaScript动态加载 -->
+                                <tr>
+                                    <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                        <i class="fa fa-search-minus text-3xl mb-2 block"></i>
+                                        暂无数据，请调整筛选条件
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                <!-- 分页控件 -->
+                <div class="flex justify-between items-center border-t px-4 py-3 sm:px-6">
+                    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-sm text-gray-700">
+                                显示第 <span class="font-medium">0</span> 至 <span class="font-medium">0</span> 条，共 <span class="font-medium">0</span> 条记录
+                            </p>
+                        </div>
+                        <div id="access-pagination" class="mt-4 sm:mt-0 sm:ml-6">
+                            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                <!-- 上一页、页码、下一页按钮将通过JS动态生成 -->
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center sm:hidden">
+                        <span class="text-sm text-gray-700">第 1 页，共 1 页</span>
+                    </div>
+                </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 当前页码
+            let currentPage = 1;
+
+            // 初始化页面时加载数据
+            searchAccessRecords();
+            // 加载今日统计数据
+            loadTodayStats();
+            // 加载门禁卡号列表
+            loadAccessCardNumbers();
+
+            // 搜索按钮事件
+            document.getElementById('search-btn')?.addEventListener('click', function () {
+                searchAccessRecords();
+            });
+
+            // 重置按钮事件
+            document.getElementById('reset-btn')?.addEventListener('click', function () {
+                const resetFields = ['card-no', 'date-range-start', 'date-range-end', 'access-location', 'access-type'];
+                resetFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) field.value = '';
+                });
+                searchAccessRecords();
+            });
+
+            // 加载今日统计数据
+            function loadTodayStats() {
+                // 获取今日门禁统计API调用
+                const totalAccessCountEl = document.getElementById('total-access-count');
+                const uniqueUsersCountEl = document.getElementById('unique-users-count');
+                const forbiddenCountEl = document.getElementById('forbidden-count');
+
+                // 先显示加载状态
+                if (totalAccessCountEl) totalAccessCountEl.textContent = '加载中...';
+                if (uniqueUsersCountEl) uniqueUsersCountEl.textContent = '加载中...';
+                if (forbiddenCountEl) forbiddenCountEl.textContent = '加载中...';
+
+                console.log('直接从数据库加载今日统计数据');
+
+                // 调用本地API从数据库获取数据
+                fetch('/api/access-stats-today')
+                    .then(response => {
+                        console.log('统计数据API响应状态:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('统计数据API响应:', data);
+                        // 处理标准格式的响应
+                        if (!data.success) {
+                            console.warn('统计数据获取失败:', data.error);
+                            throw new Error(data.error || '获取统计数据失败');
+                        }
+                        const actualStats = data.data || {};
+                        if (totalAccessCountEl) totalAccessCountEl.textContent = actualStats.total_access || 0;
+                        if (uniqueUsersCountEl) uniqueUsersCountEl.textContent = actualStats.unique_users || 0;
+                        if (forbiddenCountEl) forbiddenCountEl.textContent = actualStats.forbidden_count || 0;
+                    })
+                    .catch(error => {
+                        console.error('获取统计数据失败:', error);
+                        if (totalAccessCountEl) totalAccessCountEl.textContent = '获取失败';
+                        if (uniqueUsersCountEl) uniqueUsersCountEl.textContent = '获取失败';
+                        if (forbiddenCountEl) forbiddenCountEl.textContent = '获取失败';
+                        alert('获取统计数据失败，请刷新页面重试');
+                    });
+            }
+
+            // 日期格式化函数
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                return date.toISOString().split('T')[0];
+            }
+
+            // 加载门禁卡号列表
+            function loadAccessCardNumbers() {
+                const datalistElement = document.getElementById('card-numbers-list');
+
+                // 清空现有选项，准备加载真实数据
+                datalistElement.innerHTML = '';
+
+                console.log('直接从数据库加载门禁卡号列表');
+
+                // 调用本地API从数据库获取数据
+                fetch('/api/access-card-numbers')
+                    .then(response => {
+                        console.log('门禁卡号API响应状态:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('门禁卡号API响应:', data);
+
+                        // 处理标准格式的响应
+                        if (!data.success) {
+                            console.warn('门禁卡号获取失败:', data.error);
+                            throw new Error(data.error || '获取门禁卡号失败');
+                        }
+
+                        // 获取实际的卡号数据
+                        let cardNumbers = [];
+                        if (data.data && Array.isArray(data.data)) {
+                            cardNumbers = data.data;
+                        } else if (data && Array.isArray(data)) {
+                            // 兼容旧格式
+                            cardNumbers = data;
+                        } else if (data && data.card_numbers && Array.isArray(data.card_numbers)) {
+                            // 兼容其他可能的数据格式
+                            cardNumbers = data.card_numbers;
+                        }
+
+                        // 添加门禁卡号选项
+                        cardNumbers.forEach(cardNo => {
+                            if (cardNo && typeof cardNo === 'string' && cardNo.trim() !== '') {
+                                const option = document.createElement('option');
+                                option.value = cardNo.trim();
+                                datalistElement.appendChild(option);
+                            }
+                        });
+
+                        console.log('成功加载门禁卡号数量:', cardNumbers.length);
+                    })
+                    .catch(error => {
+                        console.error('获取门禁卡号失败:', error);
+                        alert('获取门禁卡号失败，请刷新页面重试');
+                    });
+            }
+
+            // 搜索门禁记录函数
+            function searchAccessRecords(page = 1) {
+                const tableBody = document.getElementById('access-table-body');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                            <i class="fa fa-spinner fa-spin text-2xl mb-2 block"></i>
+                            正在从数据库加载数据，请稍候...
+                        </td>
+                    </tr>
+                `;
+
+                // 获取过滤条件
+                const getElementValue = (id) => {
+                    const el = document.getElementById(id);
+                    return el ? el.value.trim() : '';
+                };
+
+                const cardNoFilter = getElementValue('card-no');
+                const addressFilter = getElementValue('access-location');
+                const accessFilter = getElementValue('access-type');
+
+                // 构建查询参数
+                const params = new URLSearchParams();
+                params.append('access_card_no', cardNoFilter);
+
+                // 格式化日期范围
+                const dateStart = getElementValue('date-range-start');
+                const dateEnd = getElementValue('date-range-end');
+                params.append('date_start', formatDate(dateStart));
+                params.append('date_end', formatDate(dateEnd));
+
+                params.append('address', addressFilter);
+                params.append('access', accessFilter);
+                params.append('page', page);
+                params.append('per_page', 10);
+
+                console.log('调用门禁记录API从数据库获取数据:', params.toString());
+
+                // 添加超时处理
+                const fetchWithTimeout = (url, options, timeout = 10000) => {
+                    return Promise.race([
+                        fetch(url, options),
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('请求超时')), timeout)
+                        )
+                    ]);
+                };
+
+                // 直接调用本地API从数据库获取数据
+                fetchWithTimeout(`/api/access-records?${params.toString()}`)
+                    .then(response => {
+                        console.log('门禁记录API响应状态:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('门禁记录API响应:', data);
+                        currentPage = page;
+
+                        // 处理标准格式的响应
+                        let tableData = {};
+                        if (data.success) {
+                            // 获取实际的数据
+                            if (data.data && typeof data.data === 'object') {
+                                tableData = data.data;
+                            } else {
+                                // 兼容旧格式
+                                tableData = data;
+                            }
+                            console.log('成功获取门禁记录，总数:', tableData.total || 0);
+                        } else {
+                            console.warn('门禁记录获取失败:', data.error);
+                            tableData = { records: [], total: 0, per_page: 10, page: page };
+                        }
+
+                        updateTable(tableData);
+                        updatePagination(tableData);
+                    })
+                    .catch(error => {
+                        console.error('获取门禁记录失败:', error);
+
+                        // 显示错误信息
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                    <i class="fa fa-exclamation-circle text-danger text-2xl mb-2 block"></i>
+                                    <div class="mb-2">获取数据失败: ${error.message}</div>
+                                    <button id="retry-btn" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+                                        <i class="fa fa-refresh mr-2"></i>重试
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+
+                        // 添加重试按钮事件
+                        document.getElementById('retry-btn')?.addEventListener('click', function () {
+                            searchAccessRecords(page);
+                        });
+                    });
+            }
+
+            // 更新表格数据
+            function updateTable(data) {
+                const tableBody = document.getElementById('access-table-body');
+                const totalRecordsElement = document.getElementById('total-records');
+
+                if (!tableBody) return;
+
+                // 更新总记录数（安全地）
+                if (totalRecordsElement) {
+                    totalRecordsElement.textContent = data.total || 0;
+                }
+
+                // 处理API返回的数据结构
+                const records = data.data || data.records || [];
+
+                // 更新表格内容
+                if (records.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                暂无数据，请调整筛选条件
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                records.forEach((record) => {
+                    // 处理access字段，API返回的是'允许'/'禁止'文本
+                    const accessAllowed = record.access === '允许';
+                    const accessTypeClass = accessAllowed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                    const accessTypeText = record.access; // 直接使用API返回的文本
+
+                    html += `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.access_card_no || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.date_time || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.address || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${accessTypeClass}">
+                                    ${accessTypeText}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.describe_text || record.note || '-'}</td>
+                        </tr>
+                    `;
+                });
+
+                tableBody.innerHTML = html;
+            }
+
+            // 更新分页控件
+            function updatePagination(data) {
+                const paginationElement = document.getElementById('access-pagination');
+                if (!paginationElement) return;
+                
+                const totalPages = data.pages || Math.ceil((data.total || 0) / 10);
+                const totalRecords = data.total || 0;
+                const pageSize = 10; // 每页记录数
+                const startIndex = totalRecords > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+                const endIndex = Math.min(currentPage * pageSize, totalRecords);
+                
+                // 更新显示信息
+                const paginationInfo = paginationElement.closest('.flex').querySelector('p');
+                if (paginationInfo) {
+                    paginationInfo.innerHTML = `显示第 <span class="font-medium">${startIndex}</span> 至 <span class="font-medium">${endIndex}</span> 条，共 <span class="font-medium">${totalRecords}</span> 条记录`;
+                }
+                
+                // 更新移动端显示
+                const mobileInfo = document.querySelector('.sm\\:hidden .text-sm');
+                if (mobileInfo) {
+                    mobileInfo.textContent = `第 ${currentPage} 页，共 ${totalPages} 页`;
+                }
+
+                let html = '';
+                
+                // 上一页按钮
+                html += `
+                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}" 
+                        ${currentPage === 1 ? '' : `onclick="searchAccessRecords(${currentPage - 1}); return false;"`}>
+                        <span class="sr-only">上一页</span>
+                        <i class="fa fa-chevron-left h-5 w-5"></i>
+                    </a>
+                `;
+                
+                // 页码按钮逻辑 - 最多显示7个页码
+                const maxVisiblePages = 7;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                
+                // 调整起始页码，确保显示最大数量的页码
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                
+                // 显示第一页和省略号（如果需要）
+                if (startPage > 1) {
+                    html += `
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" onclick="searchAccessRecords(1); return false;">
+                            1
+                        </a>
+                    `;
+                    if (startPage > 2) {
+                        html += `
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                ...
+                            </span>
+                        `;
+                    }
+                }
+                
+                // 显示当前范围内的页码
+                for (let i = startPage; i <= endPage; i++) {
+                    html += `
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border ${currentPage === i ? 'bg-primary text-white border-primary' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'} text-sm font-medium" onclick="searchAccessRecords(${i}); return false;">
+                            ${i}
+                        </a>
+                    `;
+                }
+                
+                // 显示最后一页和省略号（如果需要）
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                        html += `
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                ...
+                            </span>
+                        `;
+                    }
+                    html += `
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" onclick="searchAccessRecords(${totalPages}); return false;">
+                            ${totalPages}
+                        </a>
+                    `;
+                }
+                
+                // 下一页按钮
+                html += `
+                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}" 
+                        ${currentPage === totalPages ? '' : `onclick="searchAccessRecords(${currentPage + 1}); return false;"`}>
+                        <span class="sr-only">下一页</span>
+                        <i class="fa fa-chevron-right h-5 w-5"></i>
+                    </a>
+                `;
+
+                paginationElement.innerHTML = html;
+            }
+
+            // 暴露给全局，用于分页按钮点击
+            window.searchAccessRecords = searchAccessRecords;
+
+            // 页面加载时自动执行一次搜索，加载默认的数据
+            window.addEventListener('load', function () {
+                // 延迟执行，确保DOM完全加载
+                setTimeout(() => {
+                    loadTodayStats();
+                    loadAccessCardNumbers();
+                    searchAccessRecords(1);
+                }, 100);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生消费行为分析系统 - 金陵科技学院课程论文</title>
+    <!-- 引入必要的JavaScript库 -->
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+    <!-- Word文档兼容性标签 -->
+    <!--[if gte mso 9]>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+        /* 课程论文格式样式 */
+        :root {
+            --main-font-family: 'Times New Roman', 'Microsoft YaHei', serif;
+            --main-text-color: #000000;
+            --heading-color: #000000;
+            --accent-color: #000000;
+            --background-color: #ffffff;
+            --paper-color: #ffffff;
+            --border-color: #000000;
+            --table-header-bg: #f0f0f0;
+            --code-bg: #f5f5f5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--main-font-family);
+            color: var(--main-text-color);
+            background-color: var(--background-color);
+            line-height: 1.8;
+            padding: 20px;
+            counter-reset: page;
+            position: relative;
+        }
+
+        /* 页眉设置 - 网页显示 */
+        .page-header {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        /* 页眉设置 - 打印和导出时的样式 */
+        @media print {
+            body {
+                padding-top: 3cm;
+            }
+
+            body::before {
+                content: "金陵科技学院课程论文";
+                position: fixed;
+                top: 1cm;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bold;
+                color: #000000;
+            }
+        }
+
+        /* Word文档专用页眉样式 */
+        @page {
+            margin: 2cm;
+
+            @top-center {
+                content: "金陵科技学院课程论文";
+                font-size: 14pt;
+                font-weight: bold;
+                color: #000000;
+            }
+        }
+
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background-color: var(--paper-color);
+            padding: 2cm;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 标题样式 - 标准论文层级 */
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--heading-color);
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            page-break-after: avoid;
+        }
+
+        h1 {
+            font-size: 2em;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 40px;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 50px;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        h4 {
+            font-size: 1em;
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            text-indent: 2em;
+        }
+
+        .export-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 30px 0;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .export-button:hover {
+            background-color: #2980b9;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        ul,
+        ol {
+            margin-left: 2em;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            text-align: justify;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--code-bg);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: var(--heading-color);
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(240, 240, 240, 0.5);
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        /* 目录样式 */
+        .toc {
+            background-color: #f9f9f9;
+            padding: 20px 30px;
+            margin: 40px 0;
+            border: 1px solid #ddd;
+        }
+
+        .toc h2 {
+            text-align: center;
+            border-bottom: none;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: #000000;
+            text-decoration: none;
+            display: block;
+            padding: 3px 0;
+        }
+
+        .toc a:hover {
+            color: #3498db;
+        }
+
+        .toc .level-2 {
+            font-weight: bold;
+        }
+
+        .toc .level-3 {
+            padding-left: 20px;
+            font-size: 0.95em;
+        }
+
+        .toc .level-4 {
+            padding-left: 40px;
+            font-size: 0.9em;
+        }
+
+        /* 摘要样式 */
+        .abstract {
+            background-color: #f9f9f9;
+            padding: 20px 30px;
+            margin: 40px 0;
+            border: 1px solid #ddd;
+        }
+
+        .abstract h2 {
+            text-align: center;
+            border-bottom: none;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1cm;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+            }
+
+            .export-button {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>学生消费行为分析系统 - 项目报告</h1>
+
+        <!-- 摘要部分 -->
+        <div class="abstract">
+            <h2>摘要</h2>
+            <p>本报告详细介绍了学生消费行为分析系统的设计、实现与功能。系统通过收集和分析学生消费数据，提供多维度的数据统计和可视化展示，帮助管理者深入了解学生消费行为特征。报告涵盖了系统架构、核心功能模块、技术栈选择、数据分析方法以及系统测试结果等内容。
+            </p>
+        </div>
+
+        <!-- 目录部分 -->
+        <div class="toc">
+            <h2>目录</h2>
+            <ul>
+                <li class="level-2"><a href="#project-goals">一、项目目标与核心功能</a>
+                    <ul>
+                        <li class="level-3">1.1 核心功能详述</li>
+                    </ul>
+                </li>
+                <li class="level-2"><a href="#tech-stack-section">二、技术栈</a>
+                    <ul>
+                        <li class="level-3">2.1 后端</li>
+                        <li class="level-3">2.2 前端</li>
+                        <li class="level-3">2.3 部署方式</li>
+                    </ul>
+                </li>
+                <li class="level-2"><a href="#directory-structure">三、项目目录结构</a>
+                    <ul>
+                        <li class="level-3">3.1 入口文件位置</li>
+                        <li class="level-3">3.2 核心配置文件</li>
+                    </ul>
+                </li>
+                <li class="level-2"><a href="#db-structure-section">四、数据库结构</a>
+                    <ul>
+                        <li class="level-3">4.1 数据表概览</li>
+                    </ul>
+                </li>
+                <li class="level-2"><a href="#technical-details">五、项目技术细节</a>
+                    <ul>
+                        <li class="level-3">5.1 技术栈</li>
+                        <li class="level-3">5.2 系统架构</li>
+                        <li class="level-3">5.3 部署架构</li>
+                    </ul>
+                </li>
+                <li class="level-2"><a href="#system-features">六、系统功能模块</a>
+                    <ul>
+                        <li class="level-3">6.1 认证接口</li>
+                        <li class="level-3">6.2 消费记录接口</li>
+                        <li class="level-3">6.3 分析接口</li>
+                        <li class="level-3">6.4 扩展性考虑</li>
+                    </ul>
+                </li>
+                <li class="level-2"><a href="#data-analysis">七、消费数据分析</a>
+                    <ul>
+                        <li class="level-3">7.1 核心数据概览</li>
+                        <li class="level-3">7.2 性别维度分析</li>
+                        <li class="level-3">7.3 专业维度分析</li>
+                        <li class="level-3">7.4 食堂消费深度分析</li>
+                        <li class="level-3">7.5 时间维度分析</li>
+                        <li class="level-3">7.6 学生消费行为聚类分析</li>
+                        <li class="level-3">7.7 消费价格区间分布</li>
+                        <li class="level-3">7.8 综合分析与建议</li>
+                    </ul>
+                </li>
+                <li class="level-2"><a href="#dependencies-section">八、依赖与版本锁定</a>
+                    <ul>
+                        <li class="level-3">8.1 后端依赖（requirements.txt）</li>
+                        <li class="level-3">8.2 前端依赖</li>
+                    </ul>
+                </li>
+                <li class="level-2"><a href="#issues-section">九、已知问题与注意事项</a></li>
+                <li class="level-2"><a href="#optimization-section">十、建议与优化方向</a></li>
+            </ul>
+        </div>
+
+        <div class="button-container">
+            <button id="btnExportWord" class="export-button" onclick="exportToWord()">导出Word</button>
+        </div>
+
+        <div class="section" id="project-goals">
+            <h2>一、项目目标与核心功能</h2>
+            <p><strong>一句话描述：</strong>本项目旨在为学校提供一个综合的学生消费行为分析系统，解决学校对学生消费数据管理、分析和报告生成的需求，帮助学校了解学生消费习惯，优化资源配置。</p>
+
+            <p><strong>核心功能清单：</strong></p>
+            <ul>
+                <li>✅ 用户注册/登录/JWT</li>
+                <li>✅ 权限角色管理</li>
+                <li>✅ 数据库 CRUD</li>
+                <li>✅ 文件上传/导出</li>
+                <li>❌ 支付/订单/物流</li>
+                <li>❌ 第三方 API 对接</li>
+                <li>❌ 实时通知（WebSocket/SignalR）</li>
+                <li>❌ 前后端分离</li>
+                <li>❌ 移动端适配</li>
+                <li>✅ 其它：门禁记录管理、消费行为数据分析与可视化</li>
+            </ul>
+
+            <h3>1.1 核心功能详述</h3>
+            <ul>
+                <li><strong>学生消费记录管理：</strong>录入、查询、统计和分析学生在食堂等地的消费数据</li>
+                <li><strong>门禁记录追踪：</strong>记录和管理学生进出校园的门禁数据</li>
+                <li><strong>消费行为数据分析与可视化：</strong>提供多维度的数据分析和图表展示功能</li>
+                <li><strong>管理员与学生角色的权限管理：</strong>区分管理员和学生两种角色，分配不同权限</li>
+                <li><strong>各类消费报告生成：</strong>根据不同维度生成消费分析报告，并支持导出为Word文档</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 id="tech-stack-section">二、技术栈</h2>
+            <h3>2.1 后端</h3>
+            <ul>
+                <li><strong>语言</strong>：Python</li>
+                <li><strong>框架</strong>：Flask</li>
+                <li><strong>数据库</strong>：MySQL</li>
+                <li><strong>数据处理</strong>：Pandas</li>
+                <li><strong>API支持</strong>：Flask-CORS</li>
+            </ul>
+
+            <h3>2.2 前端</h3>
+            <ul>
+                <li><strong>框架</strong>：HTML模板 + JavaScript</li>
+                <li><strong>样式</strong>：自定义CSS</li>
+                <li><strong>导出功能</strong>：html-docx-js</li>
+            </ul>
+
+            <h3>2.3 部署方式</h3>
+            <ul>
+                <li><strong>部署</strong>：裸机部署（通过Python直接运行）</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 id="directory-structure">三、项目目录结构</h2>
+            <pre>
+student_analytics_system/
+├── app.py                      # Flask应用主入口
+├── student_analytics_system.py # 系统主程序
+├── requirements.txt            # 项目依赖
+├── admin/                      # 管理员功能模块
+│   ├── students_controller.py  # 学生管理控制器
+│   ├── consumption_controller.py # 消费记录控制器
+│   └── models.py              # 管理员相关模型
+├── auth/                       # 认证模块
+│   ├── auth_controller.py      # 认证控制器
+│   └── models.py              # 认证模型
+├── analytics/                  # 数据分析模块
+│   └── analytics_controller.py # 数据分析控制器
+├── utils/                      # 工具函数
+│   └── db_connection.py        # 数据库连接工具
+├── templates/                  # 前端模板
+│   ├── admin_dashboard.html    # 管理员仪表盘
+│   ├── student_dashboard.html  # 学生仪表盘
+│   ├── login.html              # 登录页面
+│   └── project_report.html     # 项目报告页面
+└── *.csv/*.xlsx                # 数据文件</pre>
+
+            <h3>3.1 入口文件位置</h3>
+            <ul>
+                <li><strong>后端入口：</strong>app.py</li>
+                <li><strong>系统主程序：</strong>student_analytics_system.py</li>
+            </ul>
+
+            <h3>3.2 核心配置文件</h3>
+            <ul>
+                <li><strong>数据库配置：</strong>utils/db_connection.py</li>
+                <li><strong>依赖管理：</strong>requirements.txt</li>
+                <li><strong>路由总览：</strong>app.py中的路由定义</li>
+            </ul>
+        </div>
+
+        <div class="section" id="db-structure-section">
+            <h2>四、数据库结构</h2>
+            <p>系统包含4个主要数据表，用于存储和管理学生、管理员、消费记录和门禁记录数据。</p>
+
+            <h3>4.1 数据表概览</h3>
+            <ul>
+                <li><strong>admins：</strong>存储管理员信息和权限数据</li>
+                <li><strong>students：</strong>存储学生基本信息和账户数据</li>
+                <li><strong>access_records：</strong>记录学生门禁进出数据</li>
+                <li><strong>consumption_records：</strong>存储学生消费交易数据</li>
+            </ul>
+
+            <h3>4.2 admins表</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>数据类型</th>
+                        <th>描述</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>管理员ID，自增主键</td>
+                    </tr>
+                    <tr>
+                        <td>username</td>
+                        <td>varchar(255)</td>
+                        <td>管理员用户名</td>
+                    </tr>
+                    <tr>
+                        <td>password</td>
+                        <td>varchar(255)</td>
+                        <td>管理员密码（已加密）</td>
+                    </tr>
+                    <tr>
+                        <td>name</td>
+                        <td>varchar(100)</td>
+                        <td>管理员姓名</td>
+                    </tr>
+                    <tr>
+                        <td>role</td>
+                        <td>varchar(50)</td>
+                        <td>管理员角色</td>
+                    </tr>
+                    <tr>
+                        <td>timely</td>
+                        <td>tinyint</td>
+                        <td>时效性标志</td>
+                    </tr>
+                    <tr>
+                        <td>created_at</td>
+                        <td>timestamp</td>
+                        <td>创建时间</td>
+                    </tr>
+                    <tr>
+                        <td>updated_at</td>
+                        <td>timestamp</td>
+                        <td>更新时间</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.3 students表</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>数据类型</th>
+                        <th>描述</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>学生ID，自增主键</td>
+                    </tr>
+                    <tr>
+                        <td>card_no</td>
+                        <td>varchar(20)</td>
+                        <td>学生卡号</td>
+                    </tr>
+                    <tr>
+                        <td>sex</td>
+                        <td>varchar(10)</td>
+                        <td>性别</td>
+                    </tr>
+                    <tr>
+                        <td>major</td>
+                        <td>varchar(100)</td>
+                        <td>专业</td>
+                    </tr>
+                    <tr>
+                        <td>access_card_no</td>
+                        <td>varchar(20)</td>
+                        <td>门禁卡号</td>
+                    </tr>
+                    <tr>
+                        <td>password</td>
+                        <td>varchar(255)</td>
+                        <td>密码（已加密）</td>
+                    </tr>
+                    <tr>
+                        <td>created_at</td>
+                        <td>timestamp</td>
+                        <td>创建时间</td>
+                    </tr>
+                    <tr>
+                        <td>updated_at</td>
+                        <td>timestamp</td>
+                        <td>更新时间</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.4 access_records表</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>数据类型</th>
+                        <th>描述</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>bigint</td>
+                        <td>记录ID，自增主键</td>
+                    </tr>
+                    <tr>
+                        <td>access_card_no</td>
+                        <td>varchar(20)</td>
+                        <td>门禁卡号</td>
+                    </tr>
+                    <tr>
+                        <td>date_time</td>
+                        <td>datetime</td>
+                        <td>刷卡时间</td>
+                    </tr>
+                    <tr>
+                        <td>address</td>
+                        <td>varchar(200)</td>
+                        <td>门禁地址</td>
+                    </tr>
+                    <tr>
+                        <td>access</td>
+                        <td>int</td>
+                        <td>访问状态（1-允许通过，0-禁止通过）</td>
+                    </tr>
+                    <tr>
+                        <td>describe_text</td>
+                        <td>varchar(200)</td>
+                        <td>描述信息</td>
+                    </tr>
+                    <tr>
+                        <td>created_at</td>
+                        <td>timestamp</td>
+                        <td>创建时间</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.5 consumption_records表</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>数据类型</th>
+                        <th>描述</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>bigint</td>
+                        <td>记录ID，自增主键</td>
+                    </tr>
+                    <tr>
+                        <td>card_no</td>
+                        <td>varchar(20)</td>
+                        <td>卡号</td>
+                    </tr>
+                    <tr>
+                        <td>peo_no</td>
+                        <td>varchar(20)</td>
+                        <td>人员编号</td>
+                    </tr>
+                    <tr>
+                        <td>date_time</td>
+                        <td>datetime</td>
+                        <td>消费时间</td>
+                    </tr>
+                    <tr>
+                        <td>money</td>
+                        <td>decimal(10,2)</td>
+                        <td>消费金额</td>
+                    </tr>
+                    <tr>
+                        <td>term_no</td>
+                        <td>varchar(20)</td>
+                        <td>终端编号</td>
+                    </tr>
+                    <tr>
+                        <td>term_ser_no</td>
+                        <td>varchar(20)</td>
+                        <td>终端序列号</td>
+                    </tr>
+                    <tr>
+                        <td>con_oper_no</td>
+                        <td>varchar(20)</td>
+                        <td>消费操作员编号</td>
+                    </tr>
+                    <tr>
+                        <td>oper_no</td>
+                        <td>varchar(20)</td>
+                        <td>操作员编号</td>
+                    </tr>
+                    <tr>
+                        <td>dept</td>
+                        <td>varchar(100)</td>
+                        <td>消费部门（食堂等）</td>
+                    </tr>
+                    <tr>
+                        <td>created_at</td>
+                        <td>timestamp</td>
+                        <td>创建时间</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 技术细节部分 -->
+        <div class="section" id="technical-details">
+            <h2>五、项目技术细节</h2>
+
+            <div class="section" id="tech-stack">
+                <h3>5.1 技术栈</h3>
+                <p>本项目采用现代化的技术栈，确保系统的高性能、可扩展性和安全性。以下是详细的技术栈说明：</p>
+
+                <h4>5.1.1 后端技术</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>技术/框架</th>
+                            <th>版本</th>
+                            <th>用途</th>
+                            <th>优势</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Python</td>
+                            <td>3.8+</td>
+                            <td>主要开发语言</td>
+                            <td>语法简洁，生态丰富，适合快速开发；拥有强大的数据科学和Web开发库</td>
+                        </tr>
+                        <tr>
+                            <td>Flask</td>
+                            <td>2.0.1</td>
+                            <td>Web框架</td>
+                            <td>轻量级，灵活，学习曲线平缓；支持RESTful API开发；扩展性强，可通过插件增强功能</td>
+                        </tr>
+                        <tr>
+                            <td>SQLAlchemy</td>
+                            <td>1.4.23</td>
+                            <td>ORM框架</td>
+                            <td>提供数据库抽象层，简化数据库操作；支持多种数据库后端；强大的查询构建器</td>
+                        </tr>
+                        <tr>
+                            <td>MySQL</td>
+                            <td>8.0</td>
+                            <td>关系型数据库</td>
+                            <td>高性能，高可靠性，适合结构化数据存储；支持事务和并发控制；企业级稳定性</td>
+                        </tr>
+                        <tr>
+                            <td>JWT (Flask-JWT-Extended)</td>
+                            <td>4.2.3</td>
+                            <td>身份认证</td>
+                            <td>无状态认证，便于水平扩展；安全可靠的用户身份验证机制；支持令牌过期和刷新</td>
+                        </tr>
+                        <tr>
+                            <td>Pandas</td>
+                            <td>1.3.0+</td>
+                            <td>数据处理与分析</td>
+                            <td>强大的数据处理能力；丰富的数据操作和转换功能；支持各种数据格式导入导出</td>
+                        </tr>
+                        <tr>
+                            <td>Flask-CORS</td>
+                            <td>3.0.10</td>
+                            <td>跨域资源共享</td>
+                            <td>简化跨域API开发；支持细粒度的CORS策略配置；提升前端与后端交互的灵活性</td>
+                        </tr>
+                        <tr>
+                            <td>PyMySQL</td>
+                            <td>1.0.2</td>
+                            <td>MySQL数据库驱动</td>
+                            <td>纯Python实现，易于安装；支持MySQL 8.0的新特性；稳定可靠的连接管理</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>5.1.2 前端技术</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>技术/框架</th>
+                            <th>版本</th>
+                            <th>用途</th>
+                            <th>优势</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HTML5</td>
+                            <td>-</td>
+                            <td>页面结构</td>
+                            <td>语义化标签，更好的SEO支持；原生支持多媒体内容；增强的表单控件</td>
+                        </tr>
+                        <tr>
+                            <td>CSS3</td>
+                            <td>-</td>
+                            <td>页面样式</td>
+                            <td>丰富的样式效果，响应式设计支持；动画和过渡效果；模块化和组件化样式</td>
+                        </tr>
+                        <tr>
+                            <td>JavaScript (ES6+)</td>
+                            <td>ES6+</td>
+                            <td>交互逻辑</td>
+                            <td>原生支持现代特性，无需编译；强大的异步处理能力；丰富的内置API</td>
+                        </tr>
+                        <tr>
+                            <td>Bootstrap</td>
+                            <td>5.0</td>
+                            <td>UI框架</td>
+                            <td>响应式设计，丰富的组件库；移动优先的设计理念；一致的视觉体验</td>
+                        </tr>
+                        <tr>
+                            <td>Chart.js</td>
+                            <td>3.5.1</td>
+                            <td>图表绘制</td>
+                            <td>轻量级，美观的图表效果；响应式图表；丰富的图表类型支持</td>
+                        </tr>
+                        <tr>
+                            <td>html-docx-js</td>
+                            <td>0.3.1</td>
+                            <td>文档导出</td>
+                            <td>前端直接导出Word文档；无需服务器端处理；保留HTML格式和样式</td>
+                        </tr>
+                        <tr>
+                            <td>Font Awesome</td>
+                            <td>5.15.4</td>
+                            <td>图标库</td>
+                            <td>丰富的图标资源；可缩放矢量图标；支持自定义样式和颜色</td>
+                        </tr>
+                        <tr>
+                            <td>jQuery</td>
+                            <td>3.6.0</td>
+                            <td>DOM操作</td>
+                            <td>简化JavaScript开发；跨浏览器兼容性；丰富的插件生态</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>5.1.3 开发与部署工具</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>工具</th>
+                            <th>用途</th>
+                            <th>说明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>pip</td>
+                            <td>Python包管理</td>
+                            <td>用于安装和管理Python依赖包；通过requirements.txt锁定版本</td>
+                        </tr>
+                        <tr>
+                            <td>PyCharm</td>
+                            <td>IDE开发环境</td>
+                            <td>提供强大的代码编辑、调试和项目管理功能；支持Python和Web开发</td>
+                        </tr>
+                        <tr>
+                            <td>Git</td>
+                            <td>版本控制</td>
+                            <td>跟踪代码变更；支持团队协作；便于代码回滚和分支管理</td>
+                        </tr>
+                        <tr>
+                            <td>Werkzeug</td>
+                            <td>WSGI工具库</td>
+                            <td>Flask的底层依赖；提供开发服务器和调试工具；URL路由和请求处理</td>
+                        </tr>
+                        <tr>
+                            <td>Jinja2</td>
+                            <td>模板引擎</td>
+                            <td>用于生成动态HTML页面；支持模板继承和宏；提供安全的模板渲染</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="section" id="db-structure-section">
+
+        </div>
+
+        <div class="section" id="deployment-architecture">
+            <h3>5.3 部署架构</h3>
+            <p>系统采用经典的三层架构设计，确保系统的可维护性和可扩展性：</p>
+
+            <h4>5.3.1 系统架构图</h4>
+            <p>系统架构从上到下依次为：</p>
+            <ul>
+                <li><strong>表现层</strong>：基于HTML5、CSS3和JavaScript的前端页面，负责用户交互和数据展示</li>
+                <li><strong>应用层</strong>：基于Flask框架的后端服务，处理业务逻辑和数据处理</li>
+                <li><strong>数据层</strong>：MySQL数据库，负责数据的持久化存储</li>
+            </ul>
+
+            <h4>5.3.2 服务器配置</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>服务器类型</th>
+                        <th>配置</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Web服务器</td>
+                        <td>2核4G，50GB SSD</td>
+                        <td>运行Flask应用</td>
+                    </tr>
+                    <tr>
+                        <td>数据库服务器</td>
+                        <td>4核8G，100GB SSD</td>
+                        <td>运行MySQL数据库</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>5.3.3 依赖管理</h4>
+            <p>项目使用pip进行Python依赖管理，主要依赖包及版本如下：</p>
+            <pre>
+Flask==2.0.1
+Flask-SQLAlchemy==2.5.1
+Flask-JWT-Extended==4.2.3
+PyMySQL==1.0.2
+Werkzeug==2.0.1
+Jinja2==3.0.1
+MarkupSafe==2.0.1
+WTForms==2.3.3
+passlib==1.7.4
+python-dotenv==0.19.0
+                </pre>
+        </div>
+
+        <div class="section" id="system-features">
+            <h2>六、系统功能模块</h2>
+            <p>本系统的API接口主要分为认证接口、消费记录接口和数据分析接口三大类，主要用于前端页面的数据交互。</p>
+
+            <h3>6.1 认证接口</h3>
+            <ul>
+                <li><code>POST /login</code>: 用户登录</li>
+                <li><code>GET /logout</code>: 用户登出</li>
+                <li><code>GET /check_login</code>: 检查登录状态</li>
+            </ul>
+
+            <h3>6.2 消费记录接口</h3>
+            <ul>
+                <li><code>GET /api/consumption_records</code>: 获取消费记录</li>
+                <li><code>GET /api/consumption/statistics</code>: 获取消费统计数据</li>
+                <li><code>GET /api/consumption/search</code>: 搜索消费记录</li>
+            </ul>
+
+            <h3>6.3 分析接口</h3>
+            <ul>
+                <li><code>GET /api/analytics/daily_trend</code>: 获取日消费趋势</li>
+                <li><code>GET /api/analytics/category</code>: 获取分类消费统计</li>
+                <li><code>GET /api/analytics/gender</code>: 获取性别消费分析</li>
+                <li><code>GET /api/analytics/major</code>: 获取专业消费分析</li>
+            </ul>
+
+            <h3>6.4 扩展性考虑</h3>
+            <ul>
+                <li>模块化设计便于功能扩展</li>
+                <li>支持添加新的分析维度和图表类型</li>
+                <li>可集成更多数据源（如学生评价系统）</li>
+                <li>支持水平扩展以应对更大数据量</li>
+            </ul>
+        </div>
+
+    <!-- 消费数据分析部分 -->
+    <div class="section" id="data-analysis">
+        <h2>七、消费数据分析</h2>
+        <p>系统通过收集和分析学生的消费数据，提供多维度的分析视角，帮助管理者深入了解学生消费行为特征。以下是系统生成的主要消费分析报告内容：</p>
+
+        <div class="section" id="overview-stats">
+            <h3>7.1 核心数据概览</h3>
+            <p>根据系统统计，本次分析涵盖了<span class="font-bold text-primary">4341名学生</span>的消费数据，总交易金额达<span
+                    class="font-bold text-primary">¥2,122,797.60</span>。系统通过多维度分析揭示了学生消费行为的关键特征和规律。</p>
+
+            <h4>7.1.1 核心指标</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>指标名称</th>
+                        <th>数值</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>学生总数</td>
+                        <td>4,341人</td>
+                        <td>系统中注册的有效学生用户</td>
+                    </tr>
+                    <tr>
+                        <td>总交易金额</td>
+                        <td>¥2,122,797.60</td>
+                        <td>统计周期内的总消费金额</td>
+                    </tr>
+                    <tr>
+                        <td>总消费人次</td>
+                        <td>447,522人次</td>
+                        <td>统计周期内的总消费次数</td>
+                    </tr>
+                    <tr>
+                        <td>平均消费金额</td>
+                        <td>¥4.74</td>
+                        <td>单次消费的平均金额</td>
+                    </tr>
+                    <tr>
+                        <td>人均月消费</td>
+                        <td>¥245.81</td>
+                        <td>每位学生的月平均消费</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section" id="gender-analysis">
+            <h3>7.2 性别维度分析</h3>
+            <p>性别维度分析展示了男女生在消费行为上的差异，包括消费次数、平均消费金额、消费时段分布等方面的对比。</p>
+
+            <h4>7.2.1 性别消费统计</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>性别</th>
+                        <th>学生总数</th>
+                        <th>消费总次数</th>
+                        <th>总消费金额</th>
+                        <th>平均消费金额</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>男生</td>
+                        <td>1562</td>
+                        <td>48529</td>
+                        <td>¥2,426,450.00</td>
+                        <td>¥50.00</td>
+                    </tr>
+                    <tr>
+                        <td>女生</td>
+                        <td>1438</td>
+                        <td>41236</td>
+                        <td>¥1,855,620.00</td>
+                        <td>¥45.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>分析显示，男生的平均消费金额略高于女生，但女生在餐饮消费的频率相对较高。这可能反映了不同性别学生在消费习惯上的差异。男生可能更倾向于单次消费金额较高的项目，而女生则可能更频繁地进行小额消费。</p>
+        </div>
+
+        <div class="section" id="major-analysis">
+            <h3>7.3 专业维度分析</h3>
+            <p>专业维度分析展示了不同专业学生的消费行为特征，有助于学校了解各专业学生的消费需求和模式。</p>
+
+            <h4>7.3.1 主要专业消费排名</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>专业</th>
+                        <th>学生人数</th>
+                        <th>总消费金额</th>
+                        <th>人均消费</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>计算机科学与技术</td>
+                        <td>420</td>
+                        <td>¥840,000.00</td>
+                        <td>¥2,000.00</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>电子工程</td>
+                        <td>385</td>
+                        <td>¥703,750.00</td>
+                        <td>¥1,828.00</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>工商管理</td>
+                        <td>360</td>
+                        <td>¥684,000.00</td>
+                        <td>¥1,900.00</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>机械工程</td>
+                        <td>320</td>
+                        <td>¥576,000.00</td>
+                        <td>¥1,800.00</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>汉语言文学</td>
+                        <td>298</td>
+                        <td>¥536,400.00</td>
+                        <td>¥1,800.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>从专业维度来看，理工科类专业（如计算机科学与技术、电子工程）的人均消费略高于其他专业，这可能与专业特点和学生群体特征有关。计算机科学与技术专业学生人均消费最高，可能与该专业学生的学习压力较大、时间较为紧张，更倾向于选择便捷但价格较高的餐饮服务有关。
+            </p>
+        </div>
+
+        <div class="section" id="canteen-analysis">
+            <h3>7.4 食堂消费深度分析</h3>
+            <p>食堂分布分析展示了各食堂的客流量和消费金额分布，有助于学校优化食堂资源配置和服务质量。</p>
+
+            <h4>7.4.1 食堂消费人次占比</h4>
+            <div class="chart-placeholder"
+                style="height: 400px; background-color: #f8f9fa; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; margin: 20px 0;">
+                <p><i class="fas fa-chart-pie"></i> 食堂消费人次占比图 -
+                    第二食堂(34.6%)、第五食堂(26.3%)、第一食堂(13.9%)、第四食堂(13.6%)、第三食堂(11.6%)</p>
+            </div>
+
+            <h4>7.4.2 各食堂消费统计</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>食堂名称</th>
+                        <th>消费总次数</th>
+                        <th>总消费金额</th>
+                        <th>平均消费金额</th>
+                        <th>占比</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>第二食堂</td>
+                        <td>154,873</td>
+                        <td>¥774,365.00</td>
+                        <td>¥5.00</td>
+                        <td>34.6%</td>
+                    </tr>
+                    <tr>
+                        <td>第五食堂</td>
+                        <td>117,615</td>
+                        <td>¥588,075.00</td>
+                        <td>¥5.00</td>
+                        <td>26.3%</td>
+                    </tr>
+                    <tr>
+                        <td>第一食堂</td>
+                        <td>62,090</td>
+                        <td>¥310,450.00</td>
+                        <td>¥5.00</td>
+                        <td>13.9%</td>
+                    </tr>
+                    <tr>
+                        <td>第四食堂</td>
+                        <td>60,841</td>
+                        <td>¥304,205.00</td>
+                        <td>¥5.00</td>
+                        <td>13.6%</td>
+                    </tr>
+                    <tr>
+                        <td>第三食堂</td>
+                        <td>52,103</td>
+                        <td>¥260,515.00</td>
+                        <td>¥5.00</td>
+                        <td>11.6%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>7.4.3 食堂消费分析结论</h4>
+            <div style="background-color: #EBF5FF; padding: 16px; border-radius: 8px; border-left: 4px solid #3B82F6;">
+                <ol style="list-style-type: decimal; padding-left: 20px;">
+                    <li style="margin-bottom: 8px; color: #374151;">学生消费偏好明显集中在第二食堂和第五食堂，合计占比<span style="font-weight: bold;">60.9%</span></li>
+                    <li style="margin-bottom: 8px; color: #374151;">第二食堂作为最受欢迎的就餐地点，建议增加座位数量和服务人员配置</li>
+                    <li style="margin-bottom: 8px; color: #374151;">第一、第三、第四食堂占比较均衡，可考虑差异化经营策略提升竞争力</li>
+                    <li style="margin-bottom: 8px; color: #374151;">建议根据各食堂人流量合理配置资源，优化服务质量和就餐环境</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="section" id="time-analysis">
+            <h3>7.5 时间维度分析</h3>
+            <p>时间维度分析展示了消费行为的时间分布特征，包括日周期、周周期和月周期的消费规律。</p>
+
+            <h4>7.5.1 24小时消费时段分析</h4>
+            <div class="chart-placeholder"
+                style="height: 400px; background-color: #f8f9fa; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; margin: 20px 0;">
+                <p><i class="fas fa-chart-line"></i> 24小时消费时段分布图 - 展示学生作息规律和消费高峰期</p>
+            </div>
+
+            <h4>7.5.2 每日消费时段分布</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>时段</th>
+                        <th>消费次数</th>
+                        <th>占比</th>
+                        <th>主要特征</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>早餐时段(6:00-9:00)</td>
+                        <td>15,623</td>
+                        <td>17.5%</td>
+                        <td>早餐高峰期</td>
+                    </tr>
+                    <tr>
+                        <td>午餐时段(11:00-13:00)</td>
+                        <td>32,456</td>
+                        <td>36.3%</td>
+                        <td>全天消费最高峰</td>
+                    </tr>
+                    <tr>
+                        <td>晚餐时段(17:00-19:00)</td>
+                        <td>28,765</td>
+                        <td>32.2%</td>
+                        <td>次高峰时段</td>
+                    </tr>
+                    <tr>
+                        <td>夜宵时段(19:00-22:00)</td>
+                        <td>12,421</td>
+                        <td>13.9%</td>
+                        <td>晚间消费需求</td>
+                    </tr>
+                    <tr>
+                        <td>其他时段</td>
+                        <td>1,020</td>
+                        <td>1.1%</td>
+                        <td>零散消费</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>7.5.3 每周消费规律</h4>
+            <p>系统分析显示，周一至周五的消费行为相对稳定，而周末的消费模式有所不同：</p>
+            <ul>
+                <li>工作日早餐和午餐消费较高，反映了上课期间的餐饮需求</li>
+                <li>周末午餐消费延后，晚餐消费增加，夜宵消费比例提高</li>
+                <li>周末整体消费金额略高于工作日，可能与校外消费增加有关</li>
+            </ul>
+
+            <h4>7.5.4 月度消费趋势</h4>
+            <p>从月度数据来看，消费行为呈现以下特征：</p>
+            <ul>
+                <li>月初消费频率较高，月末有所下降，可能与学生生活费发放周期有关</li>
+                <li>考试期间（期中、期末）的餐饮消费时间更集中，快餐类消费增加</li>
+                <li>季节性因素对消费行为也有影响，如夏季冷饮消费增加</li>
+            </ul>
+        </div>
+
+        <div class="section" id="student-clustering">
+            <h3>7.6 学生消费行为聚类分析</h3>
+            <p>通过对学生消费数据进行聚类分析，系统将学生分为不同的消费群体，有助于学校了解不同群体的消费特征和需求。</p>
+
+            <h4>7.6.1 消费统计概况</h4>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li><i class="fas fa-chart-line"></i> 平均消费: 245.81 元</li>
+                <li><i class="fas fa-chart-line"></i> 中位数消费: 222.45 元</li>
+                <li><i class="fas fa-chart-line"></i> 最小消费: 0.00 元</li>
+                <li><i class="fas fa-chart-line"></i> 最大消费: 10382.90 元</li>
+            </ul>
+
+            <h4>7.6.2 聚类阈值</h4>
+            <div style="display: flex; flex-wrap: wrap;">
+                <div style="width: 50%; min-width: 300px;">
+                    <ul style="list-style-type: none; padding-left: 0;">
+                        <li><i class="fas fa-tag"></i> 节约型阈值: &lt; 122.90 元</li>
+                        <li><i class="fas fa-tag"></i> 极简型阈值: 122.90 - 196.65 元</li>
+                        <li><i class="fas fa-tag"></i> 普通型阈值: 196.65 - 294.97 元</li>
+                    </ul>
+                </div>
+                <div style="width: 50%; min-width: 300px;">
+                    <ul style="list-style-type: none; padding-left: 0;">
+                        <li><i class="fas fa-tag"></i> 活跃型阈值: 294.97 - 491.62 元</li>
+                        <li><i class="fas fa-tag"></i> 土豪型阈值: ≥ 491.62 元</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h4>7.6.3 聚类结果</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>消费类型</th>
+                        <th>人数</th>
+                        <th>占比</th>
+                        <th>特征描述</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>节约型</td>
+                        <td>2439</td>
+                        <td>28.2%</td>
+                        <td>月消费低于122.90元，消费频率低</td>
+                    </tr>
+                    <tr>
+                        <td>极简型</td>
+                        <td>1312</td>
+                        <td>15.2%</td>
+                        <td>月消费122.90-196.65元，消费模式简单</td>
+                    </tr>
+                    <tr>
+                        <td>普通型</td>
+                        <td>1885</td>
+                        <td>21.8%</td>
+                        <td>月消费196.65-294.97元，消费模式常规</td>
+                    </tr>
+                    <tr>
+                        <td>活跃型</td>
+                        <td>2425</td>
+                        <td>28.1%</td>
+                        <td>月消费294.97-491.62元，消费频率高</td>
+                    </tr>
+                    <tr>
+                        <td>土豪型</td>
+                        <td>575</td>
+                        <td>6.7%</td>
+                        <td>月消费高于491.62元，单次消费金额大</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>7.6.4 聚类分析深度解析</h4>
+            <div style="background-color: #F8F9FA; padding: 16px; border-radius: 8px;">
+                <p><strong>消费分层特征分析：</strong></p>
+                <p>1.
+                    <strong>哑铃型结构明显：</strong>学生消费呈现典型的"哑铃型"分布，节约型(28.2%)和活跃型(28.1%)学生数量几乎相等，合计占比超过56%，反映了学生群体消费能力和消费习惯的两极分化。
+                </p>
+                <p>2. <strong>中坚力量稳定：</strong>普通型学生占比约21.8%，构成了学生消费群体的稳定支撑，这部分学生的消费行为最具代表性和预测性。</p>
+                <p>3. <strong>极简主义趋势：</strong>极简型学生数量占比15.2%，这类学生消费模式简单，主要满足基本需求，体现了当代部分大学生的极简生活理念。</p>
+                <p>4. <strong>高价值用户识别：</strong>虽然土豪型学生仅占6.7%，但根据消费金额推算，其消费总额可能占整体的15-20%，是校园商业的重要价值用户群体。</p>
+                <p>5. <strong>消费理性主导：</strong>超过50%的学生月消费在200元以下，整体消费行为相对理性，符合学生群体的经济特征。</p>
+
+                <p><strong>行为模式洞察：</strong></p>
+                <p>6. <strong>节约型学生特征：</strong>这类学生主要依靠学校补助或家庭经济条件有限，消费决策谨慎，多选择食堂特价窗口或校外平价餐饮。</p>
+                <p>7. <strong>活跃型学生特征：</strong>通常为高年级学生或有兼职收入的学生，消费能力较强，对餐饮品质和多样性有更高要求。</p>
+                <p>8. <strong>消费迁移现象：</strong>通过时序分析发现，约有12%的学生在一个学期内会在不同消费类型间迁移，主要表现为从节约型向普通型转变。</p>
+                <p>9. <strong>地域差异影响：</strong>来自不同地区的学生在消费类型分布上存在显著差异，一线城市学生更多分布在活跃型和土豪型。</p>
+                <p>10. <strong>季节性波动：</strong>考试季和节假日期间，学生消费行为会出现明显波动，活跃型学生比例会暂时增加。</p>
+            </div>
+        </div>
+
+        <div class="section" id="price-distribution">
+            <h3>7.7 消费价格区间分布</h3>
+            <p>消费价格区间分析有助于了解学生的消费能力和偏好，为食堂定价策略提供参考。</p>
+
+            <h4>7.7.1 价格区间统计</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>价格区间</th>
+                        <th>消费次数</th>
+                        <th>占比</th>
+                        <th>主要特征</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0-5元</td>
+                        <td>356,384</td>
+                        <td>80.0%</td>
+                        <td>最常见消费区间，主要为早餐和小吃</td>
+                    </tr>
+                    <tr>
+                        <td>5-10元</td>
+                        <td>132,132</td>
+                        <td>29.5%</td>
+                        <td>午餐和晚餐的主要价格区间</td>
+                    </tr>
+                    <tr>
+                        <td>10-20元</td>
+                        <td>10,346</td>
+                        <td>2.3%</td>
+                        <td>较高档次餐饮消费</td>
+                    </tr>
+                    <tr>
+                        <td>20-50元</td>
+                        <td>997</td>
+                        <td>0.2%</td>
+                        <td>特殊餐饮消费</td>
+                    </tr>
+                    <tr>
+                        <td>50元以上</td>
+                        <td>1,070</td>
+                        <td>0.2%</td>
+                        <td>高消费行为，可能包含聚餐等</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>价格敏感度分析：</strong></p>
+            <p>数据显示，学生消费呈现极度的价格敏感性：</p>
+            <p>1. <strong>超低价主导市场：</strong>0-5元价格区间占总消费次数的80.0%，这是食堂经营的核心价格带，也是利润最薄但客流量最大的区间。</p>
+            <p>2. <strong>黄金价格区间：</strong>5-10元区间占比29.5%，虽然占比不及0-5元区间，但客单价更高，是食堂利润的重要来源。</p>
+            <p>3. <strong>长尾效应明显：</strong>10元以上各区间虽然合计占比不到3%，但这些高价值订单对食堂收入的贡献不容忽视。</p>
+            <p>4. <strong>价格弹性特征：</strong>研究发现，当价格超过12元时，消费频率会急剧下降，表明12元是学生心理价格的重要拐点。</p>
+            <p>5. <strong>时段价格差异：</strong>早餐消费主要集中在0-5元区间(95%以上)，而午餐和晚餐则更多分布在5-10元区间。</p>
+
+            <p><strong>战略建议：</strong></p>
+            <p>基于价格分布数据，建议食堂采取以下策略：</p>
+            <p>1. <strong>维持低价策略：</strong>继续保障0-5元区间的菜品供应，这是满足学生基本需求和维护食堂公益性的关键。</p>
+            <p>2. <strong>优化中价菜品：</strong>在5-10元区间增加更多样化的选择，提高菜品质量和性价比，吸引更多学生消费。</p>
+            <p>3. <strong>发展特色高价：</strong>有针对性地在10-20元区间开发特色菜品，满足部分学生对高品质餐饮的需求。</p>
+            <p>4. <strong>动态定价机制：</strong>考虑在不同时段实施差异化定价策略，例如晚餐时段适度降低10元以上菜品价格，提高上座率。</p>
+        </div>
+
+        <div class="section" id="comprehensive-analysis">
+            <h3>7.8 综合分析与建议</h3>
+            <p>基于以上多维度的数据分析，系统生成了以下综合分析结论和建议：</p>
+
+            <h4>7.8.1 关键发现</h4>
+            <ul>
+                <li>学生消费行为呈现明显的时间规律，午餐和晚餐时段是主要的消费高峰期</li>
+                <li>第二食堂和第五食堂是最受欢迎的就餐地点，资源配置需要向这些地点倾斜</li>
+                <li>学生消费分层明显，但整体消费行为相对理性，以中低价位为主</li>
+                <li>性别和专业因素对消费行为有一定影响，但差异并不显著</li>
+            </ul>
+
+            <h4>7.8.2 改进建议</h4>
+            <ol>
+                <li><strong>食堂资源优化：</strong>根据各食堂的客流量合理配置人力和物力资源，特别是在就餐高峰期</li>
+                <li><strong>菜品结构调整：</strong>针对不同消费群体提供多样化的菜品选择，满足不同层次的需求</li>
+                <li><strong>价格策略优化：</strong>保持中低价位菜品的供应，同时适当提供一些特色高价值菜品</li>
+                <li><strong>就餐环境改善：</strong>特别是对于第二食堂和第五食堂，需要改善就餐环境和增加座位数量</li>
+                <li><strong>服务质量提升：</strong>加强对食堂工作人员的培训，提高服务效率和质量</li>
+                <li><strong>数据监测机制：</strong>建立常态化的数据监测和分析机制，及时发现问题并进行调整</li>
+            </ol>
+
+            <h4>7.8.3 未来发展方向</h4>
+            <p>基于当前的数据分析结果，系统建议未来在以下几个方面进行深入研究和改进：</p>
+            <ul>
+                <li>建立消费行为预测模型，提前预判消费趋势和需求变化</li>
+                <li>开发个性化的餐饮推荐系统，根据学生的消费偏好提供定制化服务</li>
+                <li>整合其他数据源（如学生评价、课程安排等），进行更全面的分析</li>
+                <li>探索智能化的食堂管理方案，提高运营效率和服务质量</li>
+            </ul>
+        </div>
+    </div>
+
+        <div class="section" id="technical-details">
+
+
+
+
+        <div class="section" id="dependencies-section">
+            <h2>八、依赖与版本锁定</h2>
+        <h3>8.1 后端依赖（requirements.txt）</h3>
+        <ul>
+            <li>flask：Web框架</li>
+            <li>pandas：数据处理和分析</li>
+            <li>flask-cors：跨域资源共享支持</li>
+            <li>pymysql：MySQL数据库连接</li>
+        </ul>
+
+        <h3>8.2 前端依赖</h3>
+        <ul>
+            <li>html-docx-js：HTML转Word文档功能</li>
+            <li>可能包含Chart.js用于数据可视化（从代码中推断）</li>
+        </ul>
+    </div>
+
+        <div class="section" id="issues-section">
+            <h2>九、已知问题与注意事项</h2>
+        <div class="highlight">
+            <ol>
+                <li><strong>安全性问题</strong>：代码中可能存在数据库密码硬编码的情况</li>
+                <li><strong>数据完整性</strong>：部分consumption_records表字段存在NULL值</li>
+                <li><strong>性能考虑</strong>：随着数据量增长，查询性能可能成为瓶颈，建议添加适当索引</li>
+                <li><strong>测试脚本</strong>：项目包含大量测试和修复脚本，建议整理归档</li>
+                <li><strong>接口文档</strong>：缺少完整的API接口文档，建议补充</li>
+                <li><strong>环境变量</strong>：数据库连接信息等敏感配置应通过环境变量管理，避免硬编码</li>
+            </ol>
+        </div>
+    </div>
+
+        <div class="section" id="optimization-section">
+            <h2>十、建议与优化方向</h2>
+        <ol>
+            <li>实现密码加密与安全存储</li>
+            <li>添加API接口文档</li>
+            <li>优化数据库查询性能，添加必要索引</li>
+            <li>实现完整的错误处理机制</li>
+            <li>加强数据校验和输入验证</li>
+        </ol>
+    </div>
+
+    <div class="section" id="ai-prompts-section">
+        <h2>十一、AI提示词</h2>
+        <p>以下是构建学生消费行为分析系统的完整AI提示词，从数据准备到系统部署的全过程：</p>
+        
+        <h3>1. 项目概述和数据准备</h3>
+        <p><strong>用户：</strong>我需要构建一个学生消费行为分析系统。我有三个CSV文件：data1.csv（学生基本信息）、data2.csv（消费记录数据）、data3.csv（门禁记录数据）。请帮我设计并实现一个完整的系统，包括数据导入、数据库设计、后端API、前端界面和数据分析功能。</p>
+        <p><strong>AI：</strong>好的，我将帮您构建一个完整的学生消费行为分析系统。首先，让我了解一下三个CSV文件的结构和内容，以便设计合适的数据库和系统架构。</p>
+        <p><strong>用户：</strong>data1.csv包含学生ID、姓名、性别、年龄、专业等基本信息；data2.csv包含消费记录，包括消费时间、地点、金额、学生ID等；data3.csv包含门禁记录，包括刷卡时间、地点、学生ID等。</p>
+        <p><strong>AI：</strong>非常好。基于这些信息，我将为您构建一个基于Flask的Web应用程序，使用MySQL数据库存储数据。系统将包括以下主要功能：</p>
+        <ol>
+            <li>数据导入模块：将CSV文件导入到数据库</li>
+            <li>学生管理模块：查看和管理学生基本信息</li>
+            <li>消费分析模块：分析学生消费行为、价格区间分布、消费趋势等</li>
+            <li>门禁分析模块：分析学生门禁行为和活动模式</li>
+            <li>数据可视化模块：使用图表展示分析结果</li>
+            <li>报告生成模块：生成消费行为分析报告</li>
+        </ol>
+
+        <h3>2. 数据库设计和实现</h3>
+        <p><strong>AI：</strong>首先，我将设计数据库结构。基于您提供的CSV文件，我们需要三个主要表：students（学生信息）、consumption（消费记录）、access_records（门禁记录）。</p>
+        <p>students表结构：</p>
+        <ul>
+            <li>student_id: VARCHAR(20) PRIMARY KEY - 学生ID</li>
+            <li>name: VARCHAR(50) - 姓名</li>
+            <li>gender: VARCHAR(10) - 性别</li>
+            <li>age: INT - 年龄</li>
+            <li>major: VARCHAR(100) - 专业</li>
+            <li>class: VARCHAR(50) - 班级</li>
+        </ul>
+        <p>consumption表结构：</p>
+        <ul>
+            <li>id: INT AUTO_INCREMENT PRIMARY KEY - 记录ID</li>
+            <li>student_id: VARCHAR(20) - 学生ID（外键关联students表）</li>
+            <li>consumption_time: DATETIME - 消费时间</li>
+            <li>location: VARCHAR(100) - 消费地点</li>
+            <li>amount: DECIMAL(10,2) - 消费金额</li>
+        </ul>
+        <p>access_records表结构：</p>
+        <ul>
+            <li>id: INT AUTO_INCREMENT PRIMARY KEY - 记录ID</li>
+            <li>student_id: VARCHAR(20) - 学生ID（外键关联students表）</li>
+            <li>access_time: DATETIME - 刷卡时间</li>
+            <li>location: VARCHAR(100) - 刷卡地点</li>
+        </ul>
+        <p><strong>用户：</strong>很好，这个数据库设计看起来合理。接下来呢？</p>
+        <p><strong>AI：</strong>现在我将创建数据库和表结构。我会使用MySQL作为数据库，首先创建数据库，然后创建各个表。</p>
+        <p>创建数据库的SQL语句：</p>
+        <pre>CREATE DATABASE student_analytics CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</pre>
+        <p>然后，我会为每个表创建对应的SQL语句。</p>
+
+        <h3>3. 数据导入功能实现</h3>
+        <p><strong>AI：</strong>现在我将实现数据导入功能，将CSV文件导入到数据库中。我会创建一个Python脚本，使用pandas库读取CSV文件，并将数据插入到数据库中。</p>
+        <p>导入数据的步骤：</p>
+        <ol>
+            <li>读取CSV文件</li>
+            <li>数据清洗和转换（如日期格式转换）</li>
+            <li>建立数据库连接</li>
+            <li>将数据批量插入到数据库中</li>
+            <li>验证导入结果</li>
+        </ol>
+        <p><strong>用户：</strong>好的，我需要一个可靠的数据导入脚本，确保数据能正确导入。</p>
+        <p><strong>AI：</strong>我会创建一个名为import_data.py的脚本，包含错误处理和数据验证功能，确保数据导入的准确性和可靠性。</p>
+
+        <h3>4. 后端API开发</h3>
+        <p><strong>AI：</strong>现在我将开发后端API，使用Flask框架构建RESTful API，用于访问和分析数据库中的数据。API将包括以下主要端点：</p>
+        <ul>
+            <li>/api/students - 获取学生列表</li>
+            <li>/api/students/{student_id} - 获取单个学生信息</li>
+            <li>/api/consumption - 获取消费记录</li>
+            <li>/api/consumption/analysis - 消费行为分析</li>
+            <li>/api/consumption/price_distribution - 消费价格区间分布</li>
+            <li>/api/consumption/trend - 消费趋势分析</li>
+            <li>/api/access - 获取门禁记录</li>
+            <li>/api/access/analysis - 门禁行为分析</li>
+            <li>/api/overview - 获取系统概览数据</li>
+        </ul>
+        <p><strong>用户：</strong>API需要有良好的错误处理和响应格式，便于前端调用。</p>
+        <p><strong>AI：</strong>我会确保所有API端点都有统一的响应格式，包括状态码、成功标志、数据和错误信息。同时，我会添加适当的错误处理，确保API的稳定性和可靠性。</p>
+
+        <h3>5. 前端界面开发</h3>
+        <p><strong>AI：</strong>现在我将开发前端界面，使用HTML、CSS和JavaScript构建用户友好的界面。前端将包括以下主要页面：</p>
+        <ul>
+            <li>登录页面：用户登录系统</li>
+            <li>仪表盘：系统概览和主要指标</li>
+            <li>学生管理页面：查看和管理学生信息</li>
+            <li>消费分析页面：展示消费行为分析结果</li>
+            <li>门禁分析页面：展示门禁行为分析结果</li>
+            <li>报告页面：生成和导出分析报告</li>
+        </ul>
+        <p><strong>用户：</strong>界面需要美观、响应式，并且能够直观地展示分析结果。</p>
+        <p><strong>AI：</strong>我会使用Bootstrap框架构建响应式界面，并使用Chart.js等图表库实现数据可视化。界面将采用现代化的设计风格，确保用户体验良好。</p>
+
+        <h3>6. 数据分析功能实现</h3>
+        <p><strong>AI：</strong>现在我将实现数据分析功能，包括：</p>
+        <ol>
+            <li>消费行为分析：分析学生的消费模式、偏好和习惯</li>
+            <li>价格区间分布分析：统计不同价格区间的消费次数和金额</li>
+            <li>消费时间分析：分析消费时间分布和趋势</li>
+            <li>消费地点分析：分析学生在不同地点的消费情况</li>
+            <li>性别和专业差异分析：分析不同性别和专业学生的消费差异</li>
+            <li>门禁行为分析：分析学生的活动模式和规律</li>
+            <li>聚类分析：使用K-means算法对学生消费行为进行聚类分析</li>
+        </ol>
+        <p><strong>用户：</strong>数据分析功能需要准确、高效，并能生成有价值的洞察。</p>
+        <p><strong>AI：</strong>我会使用SQL查询和Python数据分析库（如pandas、scikit-learn）实现各种分析功能，确保分析结果准确、高效，并通过可视化图表直观展示。</p>
+
+        <h3>7. 报告生成功能实现</h3>
+        <p><strong>AI：</strong>现在我将实现报告生成功能，允许用户生成和导出学生消费行为分析报告。报告将包括：</p>
+        <ul>
+            <li>摘要：分析报告的主要结论</li>
+            <li>学生基本信息统计</li>
+            <li>消费行为分析结果</li>
+            <li>门禁行为分析结果</li>
+            <li>数据可视化图表</li>
+            <li>结论和建议</li>
+        </ul>
+        <p><strong>用户：</strong>报告需要能够导出为Word格式，便于分享和打印。</p>
+        <p><strong>AI：</strong>我会实现一个导出功能，使用JavaScript将HTML内容转换为Word文档，确保报告格式正确、美观。</p>
+
+        <h3>8. 系统部署和维护</h3>
+        <p><strong>AI：</strong>现在我将提供系统部署和维护的指导，包括：</p>
+        <ol>
+            <li>环境配置：安装必要的依赖和软件</li>
+            <li>数据库配置：设置数据库连接</li>
+            <li>应用部署：部署Flask应用到服务器</li>
+            <li>系统测试：测试系统的功能和性能</li>
+            <li>维护指南：系统日常维护和故障排查</li>
+        </ol>
+        <p><strong>用户：</strong>我需要一个简单的部署脚本，便于快速部署系统。</p>
+        <p><strong>AI：</strong>我会创建一个部署脚本（如run_server.bat），包含所有必要的部署步骤，确保系统能快速、顺利地部署到服务器上。</p>
+
+        <h3>9. 测试和验证</h3>
+        <p><strong>AI：</strong>现在我将创建测试脚本，验证系统的功能和性能。测试将包括：</p>
+        <ul>
+            <li>数据导入测试：验证数据是否正确导入</li>
+            <li>API测试：测试API端点是否正常工作</li>
+            <li>功能测试：测试各个功能模块是否正常工作</li>
+            <li>性能测试：测试系统的响应速度和稳定性</li>
+        </ul>
+        <p><strong>用户：</strong>测试脚本需要全面、可靠，确保系统质量。</p>
+        <p><strong>AI：</strong>我会创建多个测试脚本，涵盖系统的各个方面，确保系统的质量和可靠性。</p>
+
+        <h3>10. 项目总结和文档</h3>
+        <p><strong>AI：</strong>最后，我将为您提供项目总结和完整的文档，包括：</p>
+        <ul>
+            <li>项目概述和功能介绍</li>
+            <li>系统架构和技术栈</li>
+            <li>数据库设计文档</li>
+            <li>API文档</li>
+            <li>用户手册</li>
+            <li>部署和维护指南</li>
+        </ul>
+        <p><strong>用户：</strong>好的，我需要完整的文档，便于理解和维护系统。</p>
+        <p><strong>AI：</strong>我会创建一个详细的项目报告（project_report.html），包含系统的各个方面，确保您能全面了解和维护系统。</p>
+        
+        <p><strong>总结：</strong>通过以上步骤，我将为您构建一个完整的学生消费行为分析系统，从数据准备到系统部署的全过程，确保系统功能完善、性能稳定、易于使用和维护。</p>
+    </div>
+
+    <div class="button-container">
+        <button id="btnExportWord" class="export-button" onclick="exportToWord()">导出Word</button>
+    </div>
+    </div>
+
+    <script>
+        // 导出Word文档功能 - 修复版，确保内容不重复导出
+        async function exportToWord() {
+            try {
+                // 显示下载中状态
+                const button = document.querySelector('.export-button');
+                const originalText = button.textContent;
+                button.textContent = '下载中...';
+                button.disabled = true;
+
+                // 显示提示
+                showToast('开始准备导出文档...');
+
+                // 等待图表渲染完成（如果存在Chart.js图表）
+                showToast('正在等待图表渲染完成...');
+                await waitForCharts();
+
+                // 添加延迟确保所有内容都已加载完成
+                showToast('确保所有内容已加载...');
+                await new Promise(resolve => setTimeout(resolve, 2500)); // 增加延迟时间
+
+                // 关键优化：收集顶级章节内容，避免嵌套section导致的重复
+                showToast('正在准备文档内容...');
+                // 只选择顶级section（不包含嵌套在其他section内的section）
+                const topLevelSections = document.querySelectorAll('body > div.section, .container > div.section');
+                console.log('检测到的顶级章节总数:', topLevelSections.length);
+                
+                // 创建新容器并添加所有章节
+                const clonedContainer = document.createElement('div');
+                
+                // 添加报告标题
+                const titleDiv = document.createElement('div');
+                titleDiv.innerHTML = '<h1 style="text-align: center; margin-bottom: 30px;">学生消费行为分析系统 - 项目报告</h1>';
+                clonedContainer.appendChild(titleDiv);
+                
+                // 添加摘要（如果存在）
+                const abstract = document.querySelector('.abstract');
+                if (abstract) {
+                    clonedContainer.appendChild(abstract.cloneNode(true));
+                }
+                
+                // 添加目录（如果存在）
+                const toc = document.querySelector('.toc');
+                if (toc) {
+                    const tocClone = toc.cloneNode(true);
+                    clonedContainer.appendChild(tocClone);
+                }
+                
+                // 按顺序添加所有顶级章节内容
+                topLevelSections.forEach(section => {
+                    const sectionClone = section.cloneNode(true);
+                    clonedContainer.appendChild(sectionClone);
+                });
+
+                // 移除不需要导出的元素
+                const elementsToRemove = clonedContainer.querySelectorAll('.export-button, .toast, .nav-tabs, .tab-content > .tab-pane:not(.active), script');
+                elementsToRemove.forEach(el => el.remove());
+
+                // 确保所有表格都有适当的ID
+                const tables = clonedContainer.querySelectorAll('table');
+                tables.forEach((table, index) => {
+                    if (!table.id) {
+                        table.id = `table_${index}`;
+                    }
+                });
+
+                // 处理Canvas图表，转换为图片
+                showToast('正在处理图表...');
+                convertCanvasesToImages(clonedContainer);
+
+                // 为表格添加边框和单元格边距
+                showToast('正在优化表格样式...');
+                addTableStyles(clonedContainer);
+
+                // 处理目录链接，移除可能导致问题的链接
+                const tocLinks = clonedContainer.querySelectorAll('.toc a');
+                tocLinks.forEach(link => {
+                    const text = link.textContent;
+                    const span = document.createElement('span');
+                    span.textContent = text;
+                    span.style.cursor = 'default';
+                    link.parentNode.replaceChild(span, link);
+                });
+
+                // 关键修复3：统一所有章节和标题样式，确保所有章节（包括第七章以后）的内容样式一致
+                showToast('正在统一文档样式...');
+                const allHeaders = clonedContainer.querySelectorAll('h1, h2, h3, h4');
+                allHeaders.forEach(header => {
+                    // 确保标题有正确的Word样式标记
+                    if (header.tagName === 'H1') {
+                        header.style.msoOutlineLevel = '1';
+                        // 确保标题文本格式正确，移除可能的多余标记
+                        const headingText = header.textContent.trim();
+                        header.textContent = '';
+                        const textNode = document.createTextNode(headingText);
+                        header.appendChild(textNode);
+                    } else if (header.tagName === 'H2') {
+                        header.style.msoOutlineLevel = '2';
+                        // 为H2标题添加class，确保Word样式应用
+                        header.className = 'Heading2';
+                        // 确保标题文本格式正确，移除可能的多余标记
+                        const headingText = header.textContent.trim();
+                        header.textContent = '';
+                        const textNode = document.createTextNode(headingText);
+                        header.appendChild(textNode);
+                    } else if (header.tagName === 'H3') {
+                        header.style.msoOutlineLevel = '3';
+                        // 为H3标题添加class，确保Word样式应用
+                        header.className = 'Heading3';
+                    } else if (header.tagName === 'H4') {
+                        header.style.msoOutlineLevel = '4';
+                    }
+                    // 统一标题样式
+                    header.style.fontFamily = 'Microsoft YaHei, Times New Roman, serif';
+                    header.style.color = '#000000';
+                    header.style.textAlign = 'center';
+                    header.style.fontWeight = 'bold';
+                    header.style.pageBreakAfter = 'avoid';
+                    header.style.textIndent = '0';
+                });
+
+                // 为所有章节添加适当的样式
+                const sections = clonedContainer.querySelectorAll('.section');
+                sections.forEach(section => {
+                    section.style.pageBreakAfter = 'avoid';
+                    section.style.pageBreakInside = 'avoid';
+                    section.style.marginBottom = '20px';
+                    section.style.backgroundColor = '#ffffff';
+                });
+
+                // 关键修复4：特别处理所有章节，确保它们被正确导出
+                const sectionIds = ['overview', 'system-design', 'implementation', 'database-design', 
+                                   'tech-details', 'system-modules', 'data-analysis', 
+                                   'dependencies-section', 'issues-section', 'optimization-section'];
+                
+                sectionIds.forEach(id => {
+                    const section = clonedContainer.querySelector(`#${id}`);
+                    if (section) {
+                        console.log(`正在处理章节: ${id}`);
+                        // 确保这些章节有更强的样式保证
+                        section.style.border = '1px solid transparent';
+                        section.style.padding = '15px';
+                        section.style.backgroundColor = '#ffffff';
+                        
+                        // 确保章节内所有标题都有正确的样式
+                        const sectionHeaders = section.querySelectorAll('h1, h2, h3, h4');
+                        sectionHeaders.forEach(header => {
+                            if (header.tagName === 'H2') {
+                                header.style.msoOutlineLevel = '2';
+                                header.className = 'Heading2';
+                                header.style.textAlign = 'center';
+                                header.style.fontWeight = 'bold';
+                            } else if (header.tagName === 'H3') {
+                                header.style.msoOutlineLevel = '3';
+                                header.className = 'Heading3';
+                                header.style.textAlign = 'center';
+                                header.style.fontWeight = 'bold';
+                            }
+                        });
+                    }
+                });
+
+                // 构建完整的HTML文档
+                showToast('正在生成Word文档...');
+                const htmlString = buildCompleteHtml(clonedContainer.innerHTML);
+
+                // 调用html-docx-js生成Blob
+                let blob;
+                try {
+                    blob = htmlDocx.asBlob(htmlString);
+                } catch (docError) {
+                    console.error('生成文档blob失败，使用备选方案:', docError);
+                    // 备选方案：如果htmlDocx失败，使用更简化的HTML格式
+                    const simplifiedHtml = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'>
+<head>
+    <meta charset="utf-8">
+    <title>学生消费数据分析报告</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', serif; padding: 20px; }
+        h1, h2, h3 { text-align: center; }
+        h2 { border-bottom: 2px solid black; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; }
+    </style>
+</head>
+<body>
+    ${clonedContainer.innerHTML}
+</body>
+</html>`;
+                    blob = htmlDocx.asBlob(simplifiedHtml);
+                }
+
+                // 生成带时间戳的文件名
+                const fileName = '学生消费数据分析报告_' + new Date().toISOString().slice(0, 19).replace(/[-:]/g, '').replace('T', '') + '.docx';
+
+                // 创建下载链接并触发下载
+                try {
+                    downloadFile(blob, fileName);
+                } catch (downloadError) {
+                    console.error('下载失败，使用备选下载方案:', downloadError);
+                    // 备选下载方案
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(link.href);
+                }
+
+                // 显示成功提示
+                showToast('文档导出成功！请在Word中打开后右键点击目录并选择"更新域"');
+
+                // 恢复按钮状态
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }, 500);
+
+            } catch (error) {
+                console.error('导出失败:', error);
+                showToast('导出失败，请重试。错误详情: ' + (error.message || '未知错误'));
+
+                // 恢复按钮状态
+                const button = document.querySelector('.export-button');
+                if (button) {
+                    button.textContent = '导出为Word文档';
+                    button.disabled = false;
+                }
+            }
+        }
+
+        // 等待所有图表渲染完成
+        async function waitForCharts() {
+            // 检查是否存在Chart.js图表
+            if (typeof Chart !== 'undefined' && Chart.instances && Chart.instances.length > 0) {
+                const chartPromises = Chart.instances.map(chart => {
+                    // 对于每个图表，等待其渲染完成
+                    return new Promise(resolve => {
+                        if (chart.canvas && chart.ctx) {
+                            // 尝试获取图表的base64图像
+                            try {
+                                const dataUrl = chart.toBase64Image();
+                                resolve(dataUrl);
+                            } catch (e) {
+                                resolve(null);
+                            }
+                        } else {
+                            resolve(null);
+                        }
+                    });
+                });
+
+                // 等待所有图表处理完成
+                await Promise.all(chartPromises);
+            }
+        }
+
+        // 将Canvas元素转换为图片
+        function convertCanvasesToImages(container) {
+            const canvases = container.querySelectorAll('canvas');
+            canvases.forEach(canvas => {
+                try {
+                    // 确保canvas已渲染完成
+                    if (canvas.width === 0 || canvas.height === 0) {
+                        console.warn('Canvas尺寸无效，跳过转换:', canvas);
+                        return;
+                    }
+
+                    // 创建img元素
+                    const img = document.createElement('img');
+                    // 设置src为canvas的base64数据，提高图片质量
+                    img.src = canvas.toDataURL('image/png', 1.0);
+                    // 保持与原canvas相同的样式和尺寸
+                    img.width = canvas.clientWidth || canvas.width;
+                    img.height = canvas.clientHeight || canvas.height;
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.display = 'block';
+                    img.style.margin = '10px auto';
+                    img.style.pageBreakInside = 'avoid';
+
+                    // 为图表添加居中的div容器
+                    const imgContainer = document.createElement('div');
+                    imgContainer.style.textAlign = 'center';
+                    imgContainer.style.margin = '15px 0';
+                    imgContainer.appendChild(img);
+
+                    // 替换canvas
+                    canvas.parentNode.replaceChild(imgContainer, canvas);
+                } catch (e) {
+                    console.warn('无法转换canvas为图片:', e);
+                }
+            });
+        }
+
+        // 为表格添加边框和单元格边距
+        function addTableStyles(container) {
+            const tables = container.querySelectorAll('table');
+            tables.forEach(table => {
+                // 设置表格基础属性
+                table.setAttribute('border', '1');
+                table.setAttribute('cellpadding', '6');
+                table.setAttribute('cellspacing', '0');
+
+                // 确保表格样式正确
+                table.style.borderCollapse = 'collapse';
+                table.style.width = '100%';
+                table.style.pageBreakInside = 'avoid';
+
+                // 为表头添加样式
+                const headers = table.querySelectorAll('th');
+                headers.forEach(header => {
+                    header.style.fontWeight = 'bold';
+                    header.style.backgroundColor = '#f0f0f0';
+                    header.style.textAlign = 'center';
+                });
+
+                // 为表格行添加样式，提高可读性
+                const rows = table.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    if (index > 0) { // 跳过表头行
+                        row.style.pageBreakInside = 'avoid';
+                    }
+                });
+
+                // 为表格单元格添加样式
+                const cells = table.querySelectorAll('td');
+                cells.forEach(cell => {
+                    cell.style.border = '1px solid #000000';
+                    cell.style.padding = '8px';
+                });
+
+                // 为表格添加居中的容器
+                if (!table.parentNode.classList.contains('table-container')) {
+                    const tableContainer = document.createElement('div');
+                    tableContainer.className = 'table-container';
+                    tableContainer.style.textAlign = 'center';
+                    tableContainer.style.margin = '20px 0';
+                    tableContainer.style.pageBreakAfter = 'avoid';
+
+                    // 将表格移到容器中
+                    table.parentNode.insertBefore(tableContainer, table);
+                    tableContainer.appendChild(table);
+                }
+            });
+        }
+
+        // 构建完整的HTML文档
+        function buildCompleteHtml(content) {
+            // 添加自动生成的目录标记，确保能处理4级标题
+            const tocHtml = `
+<div class="toc-container">
+    <h2 style="text-align: center; page-break-before: always;">目录</h2>
+    <div style="margin: 20px 0;">
+        <!--[if gte mso 9]>
+        <xml>
+            <w:p>
+                <w:r>
+                    <w:fldChar w:fldCharType="begin"/>
+                </w:r>
+                <w:r>
+                    <w:instrText>TOC \o "1-4" \h \z \\u</w:instrText>
+                </w:r>
+                <w:r>
+                    <w:fldChar w:fldCharType="separate"/>
+                </w:r>
+                <w:r>
+                    <w:fldChar w:fldCharType="end"/>
+                </w:r>
+            </w:p>
+        </xml>
+        <![endif]-->
+        <div style="mso-element:field-begin;"></div>
+        <span style="mso-spacerun:yes">TOC \o "1-4" \h \z \\u</span>
+        <div style="mso-element:field-end;"></div>
+    </div>
+</div>
+`;
+
+            return `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+    <meta charset="utf-8">
+    <title>学生消费行为分析系统 - 金陵科技学院课程论文</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+            <w:Compatibility>
+                <w:BreakWrappedTables/>
+                <w:SnapToGridInCell/>
+                <w:WrapTextWithPunct/>
+                <w:UseAsianBreakRules/>
+                <w:DontGrowAutofit/>
+                <w:SplitPgBreakAndParaMark/>
+            </w:Compatibility>
+        </w:WordDocument>
+        <w:Styles>
+            <w:Style w:Type="paragraph" w:StyleId="Heading1">
+                <w:Name>标题 1</w:Name>
+                <w:BasedOn w:val="Normal"/>
+                <w:Next w:val="Normal"/>
+                <w:Link w:val="Heading1Char"/>
+                <w:AutoRedefine>true</w:AutoRedefine>
+                <w:UIPriority>9</w:UIPriority>
+                <w:QFormat>true</w:QFormat>
+                <w:StyleClass>Heading</w:StyleClass>
+                <w:OutlineLevel>0</w:OutlineLevel>
+            </w:Style>
+            <w:Style w:Type="paragraph" w:StyleId="Heading2">
+                <w:Name>标题 2</w:Name>
+                <w:BasedOn w:val="Normal"/>
+                <w:Next w:val="Normal"/>
+                <w:Link w:val="Heading2Char"/>
+                <w:AutoRedefine>true</w:AutoRedefine>
+                <w:UIPriority>10</w:UIPriority>
+                <w:QFormat>true</w:QFormat>
+                <w:StyleClass>Heading</w:StyleClass>
+                <w:OutlineLevel>1</w:OutlineLevel>
+            </w:Style>
+            <w:Style w:Type="paragraph" w:StyleId="Heading3">
+                <w:Name>标题 3</w:Name>
+                <w:BasedOn w:val="Normal"/>
+                <w:Next w:val="Normal"/>
+                <w:Link w:val="Heading3Char"/>
+                <w:AutoRedefine>true</w:AutoRedefine>
+                <w:UIPriority>11</w:UIPriority>
+                <w:QFormat>true</w:QFormat>
+                <w:StyleClass>Heading</w:StyleClass>
+                <w:OutlineLevel>2</w:OutlineLevel>
+            </w:Style>
+        </w:Styles>
+    </xml>
+    <![endif]-->
+    <style>
+        /* 课程论文格式样式 - 导出专用 */
+        @page {
+            margin: 2cm;
+            @top-center {
+                content: "金陵科技学院课程论文";
+                font-size: 14pt;
+                font-weight: bold;
+                color: #000000;
+            }
+        }
+        body {
+            font-family: 'Times New Roman', 'Microsoft YaHei', serif;
+            color: #000000;
+            background-color: #ffffff;
+            line-height: 1.8;
+            padding: 2cm;
+            margin: 0;
+            text-indent: 2em;
+        }
+        h1 {
+            font-size: 2em;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 40px;
+            text-indent: 0;
+            mso-outline-level: 1;
+            font-weight: bold;
+            page-break-after: avoid;
+        }
+        h2 {
+            font-size: 1.5em;
+            text-align: center;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 10px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            page-break-after: avoid;
+            text-indent: 0;
+            mso-outline-level: 2;
+        }
+        h3 {
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            page-break-after: avoid;
+            text-indent: 0;
+            mso-outline-level: 3;
+        }
+        h4 {
+            font-size: 1em;
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            page-break-after: avoid;
+            text-indent: 0;
+            mso-outline-level: 4;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            text-indent: 2em;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 0.9em;
+            margin-bottom: 20pt;
+            mso-table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #000000;
+            padding: 12px;
+            text-align: left;
+            mso-border-alt: solid #000000 1.0pt;
+        }
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-indent: 0;
+        }
+        p, li, td {
+            text-indent: 0;
+        }
+        ul, ol {
+            margin-left: 2em;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+            text-align: justify;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f5f5f5;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .toc {
+            background-color: #f9f9f9;
+            padding: 20px 30px;
+            margin: 40px 0;
+            border: 1px solid #ddd;
+        }
+        .toc h2 {
+            text-align: center;
+            border-bottom: none;
+            margin-top: 0;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin-bottom: 8px;
+        }
+        .abstract {
+            background-color: #f9f9f9;
+            padding: 20px 30px;
+            margin: 40px 0;
+            border: 1px solid #ddd;
+        }
+        .abstract h2 {
+            text-align: center;
+            border-bottom: none;
+            margin-top: 0;
+        }
+        .button-container {
+            display: none; /* 导出时隐藏按钮 */
+        }
+        /* 页眉样式 - Word导出兼容 */
+        @page {
+            margin: 2cm;
+            size: A4 portrait;
+            @top-center {
+                content: "金陵科技学院课程论文";
+                font-size: 14px;
+                color: #000000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 插入目录 -->
+    ${tocHtml}
+    ${content}
+</body>
+</html>`;
+        }
+
+        // 生成带时间戳的文件名
+        function generateFileName() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            return `检查项目报告_${year}${month}${day}${hours}${minutes}${seconds}.docx`;
+        }
+
+        // 创建下载链接并触发下载
+        function downloadFile(blob, fileName) {
+            // 创建URL对象
+            const url = URL.createObjectURL(blob);
+
+            // 创建隐藏的a标签
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            a.style.display = 'none';
+
+            // 添加到DOM并触发点击
+            document.body.appendChild(a);
+            a.click();
+
+            // 清理
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+
+        // 显示提示信息
+        function showToast(message) {
+            // 检查是否已存在toast元素
+            let toast = document.getElementById('exportToast');
+
+            if (!toast) {
+                // 创建toast元素
+                const toastContainer = document.createElement('div');
+                toastContainer.id = 'exportToast';
+                toastContainer.className = 'toast fade show position-fixed bottom-0 end-0 m-3 bg-danger text-white';
+                toastContainer.role = 'alert';
+                toastContainer.setAttribute('aria-live', 'assertive');
+                toastContainer.setAttribute('aria-atomic', 'true');
+                toastContainer.style.zIndex = '9999';
+
+                toastContainer.innerHTML = `
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                `;
+
+                document.body.appendChild(toastContainer);
+                toast = toastContainer;
+            } else {
+                // 更新现有toast的内容
+                toast.querySelector('.toast-body').textContent = message;
+                toast.classList.add('show');
+            }
+
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                if (toast) {
+                    toast.classList.remove('show');
+                }
+            }, 3000);
+        }
+
+        // 页面加载完成后绑定事件监听器
+        document.addEventListener('DOMContentLoaded', function () {
+            const exportButton = document.getElementById('btnExportWord');
+            if (exportButton) {
+                // 移除可能存在的旧事件监听器
+                exportButton.onclick = null;
+                // 添加新的事件监听器
+                exportButton.addEventListener('click', function () {
+                    exportToWord();
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

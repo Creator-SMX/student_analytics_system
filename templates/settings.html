@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - 学生消费行为分析系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+        }
+        .sidebar a:hover {
+            color: white;
+            background-color: #495057;
+        }
+        .sidebar a.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        .nav-tabs {
+            margin-bottom: 20px;
+        }
+        .alert {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="text-center mb-4">
+            <h4>学生消费行为分析系统</h4>
+        </div>
+        <a href="/admin/dashboard" class="text-white"><i class="fas fa-tachometer-alt mr-2"></i> 管理控制台</a>
+        <a href="/admin/students" class="text-white"><i class="fas fa-users mr-2"></i> 学生管理</a>
+        <a href="/admin/consumption" class="text-white"><i class="fas fa-receipt mr-2"></i> 消费记录</a>
+        <a href="/admin/access" class="text-white"><i class="fas fa-sign-in-alt mr-2"></i> 门禁记录</a>
+        <a href="/analytics/report" class="text-white"><i class="fas fa-chart-line mr-2"></i> 消费分析报告</a>
+        <a href="/admin/settings" class="text-white active"><i class="fas fa-cog mr-2"></i> 系统设置</a>
+        <div class="mt-5 pt-5 border-t border-gray-700">
+            <a href="/auth/logout" class="text-white"><i class="fas fa-sign-out-alt mr-2"></i> 退出登录</a>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <!-- 顶部导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+            <div class="container-fluid">
+                <h1 class="h3 mb-0 text-gray-800">系统设置</h1>
+                <div class="d-flex align-items-center">
+                    <span class="text-muted mr-3">管理员</span>
+                    <img src="https://via.placeholder.com/32" alt="用户头像" class="rounded-circle">
+                </div>
+            </div>
+        </nav>
+
+        <!-- 消息提示 -->
+        <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>设置已保存！</strong> 您的更改已成功应用。
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>保存失败！</strong> <span id="error-message">请检查输入并重试。</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- 选项卡导航 -->
+        <ul class="nav nav-tabs" id="settings-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button" role="tab" aria-controls="system" aria-selected="true">系统设置</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="database-tab" data-bs-toggle="tab" data-bs-target="#database" type="button" role="tab" aria-controls="database" aria-selected="false">数据库设置</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="user-management-tab" data-bs-toggle="tab" data-bs-target="#user-management" type="button" role="tab" aria-controls="user-management" aria-selected="false">用户管理</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" type="button" role="tab" aria-controls="backup" aria-selected="false">备份与恢复</button>
+            </li>
+        </ul>
+
+        <!-- 选项卡内容 -->
+        <div class="tab-content" id="settings-content">
+            <!-- 系统设置 -->
+            <div class="tab-pane fade show active" id="system" role="tabpanel" aria-labelledby="system-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-cogs mr-2"></i> 基本设置
+                    </div>
+                    <div class="card-body">
+                        <form id="system-form">
+                            <div class="mb-3">
+                                <label for="system-name" class="form-label">系统名称</label>
+                                <input type="text" class="form-control" id="system-name" value="学生消费行为分析系统">
+                            </div>
+                            <div class="mb-3">
+                                <label for="system-description" class="form-label">系统描述</label>
+                                <textarea class="form-control" id="system-description" rows="3">学生消费行为分析系统用于分析和监控学生在校园内的消费情况，提供数据统计和可视化报告。</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="page-size" class="form-label">每页显示记录数</label>
+                                <select class="form-control" id="page-size">
+                                    <option value="10" selected>10条/页</option>
+                                    <option value="20">20条/页</option>
+                                    <option value="50">50条/页</option>
+                                    <option value="100">100条/页</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">系统语言</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="system-language" id="language-zh" checked>
+                                    <label class="form-check-label" for="language-zh">简体中文</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="system-language" id="language-en">
+                                    <label class="form-check-label" for="language-en">English</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">系统状态</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="system-status" checked>
+                                    <label class="form-check-label" for="system-status">系统正常运行</label>
+                                </div>
+                                <small class="form-text text-muted">关闭系统将阻止普通用户登录，但管理员仍可访问。</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">调试模式</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="debug-mode">
+                                    <label class="form-check-label" for="debug-mode">启用调试模式</label>
+                                </div>
+                                <small class="form-text text-muted">仅在开发环境中启用，生产环境请关闭。</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-2"></i> 保存设置
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据库设置 -->
+            <div class="tab-pane fade" id="database" role="tabpanel" aria-labelledby="database-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-database mr-2"></i> 数据库连接设置
+                    </div>
+                    <div class="card-body">
+                        <form id="database-form">
+                            <div class="mb-3">
+                                <label for="db-host" class="form-label">数据库主机</label>
+                                <input type="text" class="form-control" id="db-host" value="localhost">
+                            </div>
+                            <div class="mb-3">
+                                <label for="db-port" class="form-label">数据库端口</label>
+                                <input type="number" class="form-control" id="db-port" value="3306">
+                            </div>
+                            <div class="mb-3">
+                                <label for="db-name" class="form-label">数据库名称</label>
+                                <input type="text" class="form-control" id="db-name" value="student_analytics_db">
+                            </div>
+                            <div class="mb-3">
+                                <label for="db-user" class="form-label">数据库用户名</label>
+                                <input type="text" class="form-control" id="db-user" value="root">
+                            </div>
+                            <div class="mb-3">
+                                <label for="db-password" class="form-label">数据库密码</label>
+                                <input type="password" class="form-control" id="db-password" placeholder="不修改请保持为空">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">连接池设置</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="pool-size" class="form-label">最大连接数</label>
+                                <input type="number" class="form-control" id="pool-size" value="10">
+                            </div>
+                            <div class="mb-3">
+                                <label for="connection-timeout" class="form-label">连接超时（秒）</label>
+                                <input type="number" class="form-control" id="connection-timeout" value="30">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-2"></i> 保存设置
+                            </button>
+                            <button type="button" class="btn btn-secondary ms-2" id="test-db-connection">
+                                <i class="fas fa-plug mr-2"></i> 测试连接
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户管理 -->
+            <div class="tab-pane fade" id="user-management" role="tabpanel" aria-labelledby="user-management-tab">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-user-cog mr-2"></i> 管理员用户</h5>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#add-admin-modal">
+                            <i class="fas fa-plus mr-2"></i> 添加管理员
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">用户名</th>
+                                        <th scope="col">创建时间</th>
+                                        <th scope="col">最后登录时间</th>
+                                        <th scope="col">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-table">
+                                    <tr>
+                                        <td>admin</td>
+                                        <td>2024-01-01 00:00:00</td>
+                                        <td>2024-01-15 10:30:00</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#edit-admin-modal">
+                                                <i class="fas fa-edit mr-1"></i> 编辑
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('admin')">
+                                                <i class="fas fa-trash-alt mr-1"></i> 删除
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="resetPassword('admin')">
+                                                <i class="fas fa-key mr-1"></i> 重置密码
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 备份与恢复 -->
+            <div class="tab-pane fade" id="backup" role="tabpanel" aria-labelledby="backup-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-backup mr-2"></i> 数据备份与恢复
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5>创建备份</h5>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle mr-2"></i> 创建备份可能需要一些时间，请耐心等待。
+                            </div>
+                            <button type="button" class="btn btn-primary" id="create-backup-btn">
+                                <i class="fas fa-file-export mr-2"></i> 创建备份
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <h5>备份历史</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">备份文件名</th>
+                                            <th scope="col">备份时间</th>
+                                            <th scope="col">文件大小</th>
+                                            <th scope="col">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="backups-table">
+                                        <tr>
+                                            <td>backup_20240115_100000.sql</td>
+                                            <td>2024-01-15 10:00:00</td>
+                                            <td>2.5 MB</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-success" onclick="confirmRestore('backup_20240115_100000.sql')">
+                                                    <i class="fas fa-undo mr-1"></i> 恢复
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-secondary" onclick="downloadBackup('backup_20240115_100000.sql')">
+                                                    <i class="fas fa-download mr-1"></i> 下载
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger" onclick="confirmDeleteBackup('backup_20240115_100000.sql')">
+                                                    <i class="fas fa-trash-alt mr-1"></i> 删除
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加管理员模态框 -->
+    <div class="modal fade" id="add-admin-modal" tabindex="-1" aria-labelledby="add-admin-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add-admin-modal-label">添加管理员</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-admin-form">
+                        <div class="mb-3">
+                            <label for="new-admin-username" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="new-admin-username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-admin-password" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="new-admin-password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-admin-confirm-password" class="form-label">确认密码</label>
+                            <input type="password" class="form-control" id="new-admin-confirm-password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addAdmin()">添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑管理员模态框 -->
+    <div class="modal fade" id="edit-admin-modal" tabindex="-1" aria-labelledby="edit-admin-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-admin-modal-label">编辑管理员</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-admin-form">
+                        <div class="mb-3">
+                            <label class="form-label">用户名</label>
+                            <input type="text" class="form-control" value="admin" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-admin-password" class="form-label">新密码</label>
+                            <input type="password" class="form-control" id="edit-admin-password" placeholder="留空表示不修改密码">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-admin-confirm-password" class="form-label">确认新密码</label>
+                            <input type="password" class="form-control" id="edit-admin-confirm-password" placeholder="留空表示不修改密码">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAdmin()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 表单提交处理
+        document.getElementById('system-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 显示成功消息
+            document.getElementById('success-alert').style.display = 'block';
+            // 3秒后隐藏
+            setTimeout(() => {
+                document.getElementById('success-alert').style.display = 'none';
+            }, 3000);
+        });
+
+        document.getElementById('database-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 显示成功消息
+            document.getElementById('success-alert').style.display = 'block';
+            // 3秒后隐藏
+            setTimeout(() => {
+                document.getElementById('success-alert').style.display = 'none';
+            }, 3000);
+        });
+
+        // 测试数据库连接
+        document.getElementById('test-db-connection').addEventListener('click', function() {
+            // 模拟测试连接
+            alert('数据库连接测试成功！');
+        });
+
+        // 创建备份
+        document.getElementById('create-backup-btn').addEventListener('click', function() {
+            // 模拟创建备份
+            alert('备份创建成功！');
+        });
+
+        // 用户管理相关函数
+        function confirmDelete(username) {
+            if (username === 'admin' && confirm('删除管理员账户将会影响系统使用，确定要继续吗？')) {
+                alert('删除成功！');
+            } else if (confirm('确定要删除用户 ' + username + ' 吗？')) {
+                alert('删除成功！');
+            }
+        }
+
+        function resetPassword(username) {
+            if (confirm('确定要重置用户 ' + username + ' 的密码吗？')) {
+                alert('密码已重置为默认密码: 123456');
+            }
+        }
+
+        function addAdmin() {
+            const username = document.getElementById('new-admin-username').value;
+            const password = document.getElementById('new-admin-password').value;
+            const confirmPassword = document.getElementById('new-admin-confirm-password').value;
+
+            if (!username || !password) {
+                alert('请输入用户名和密码！');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('两次输入的密码不一致！');
+                return;
+            }
+
+            alert('管理员添加成功！');
+            // 关闭模态框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('add-admin-modal'));
+            modal.hide();
+            // 重置表单
+            document.getElementById('add-admin-form').reset();
+        }
+
+        function updateAdmin() {
+            const password = document.getElementById('edit-admin-password').value;
+            const confirmPassword = document.getElementById('edit-admin-confirm-password').value;
+
+            if (password && password !== confirmPassword) {
+                alert('两次输入的密码不一致！');
+                return;
+            }
+
+            alert('管理员信息更新成功！');
+            // 关闭模态框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('edit-admin-modal'));
+            modal.hide();
+        }
+
+        // 备份管理相关函数
+        function confirmRestore(backupFile) {
+            if (confirm('恢复备份将覆盖当前所有数据，确定要继续吗？')) {
+                alert('备份恢复成功！');
+            }
+        }
+
+        function downloadBackup(backupFile) {
+            alert('下载备份文件: ' + backupFile);
+        }
+
+        function confirmDeleteBackup(backupFile) {
+            if (confirm('确定要删除备份文件 ' + backupFile + ' 吗？')) {
+                alert('备份文件删除成功！');
+            }
+        }
+    </script>
+</body>
+</html>

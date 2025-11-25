@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员管理 - 学生消费行为分析系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+        }
+        .sidebar a:hover {
+            color: white;
+            background-color: #495057;
+        }
+        .sidebar a.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            text-align: center;
+        }
+        .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        .alert {
+            display: none;
+        }
+        .badge {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .search-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="text-center mb-4">
+            <h4>学生消费行为分析系统</h4>
+        </div>
+        <a href="/admin/dashboard" class="text-white"><i class="fas fa-tachometer-alt mr-2"></i> 管理控制台</a>
+        <a href="/admin/students" class="text-white"><i class="fas fa-users mr-2"></i> 学生管理</a>
+        <a href="/admin/consumption" class="text-white"><i class="fas fa-receipt mr-2"></i> 消费记录</a>
+        <a href="/admin/access" class="text-white"><i class="fas fa-sign-in-alt mr-2"></i> 门禁记录</a>
+        <a href="/analytics/report" class="text-white"><i class="fas fa-chart-line mr-2"></i> 消费分析报告</a>
+        <a href="/admin/management" class="text-white active"><i class="fas fa-user-shield mr-2"></i> 管理员管理</a>
+        <a href="/admin/settings" class="text-white"><i class="fas fa-cog mr-2"></i> 系统设置</a>
+        <div class="mt-5 pt-5 border-t border-gray-700">
+            <a href="/auth/logout" class="text-white"><i class="fas fa-sign-out-alt mr-2"></i> 退出登录</a>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <!-- 顶部导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+            <div class="container-fluid">
+                <h1 class="h3 mb-0 text-gray-800">管理员管理</h1>
+                <div class="d-flex align-items-center">
+                    <span class="text-muted mr-3">管理员</span>
+                    <img src="https://via.placeholder.com/32" alt="用户头像" class="rounded-circle">
+                </div>
+            </div>
+        </nav>
+
+        <!-- 消息提示 -->
+        <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>操作成功！</strong> <span id="success-message"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>操作失败！</strong> <span id="error-message">请检查输入并重试。</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- 功能卡片 -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="text-primary mb-2">
+                            <i class="fas fa-user-shield fa-3x"></i>
+                        </div>
+                        <h3 class="card-title">管理员总数</h3>
+                        <p class="card-text text-2xl font-bold">10</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="text-success mb-2">
+                            <i class="fas fa-sign-in-alt fa-3x"></i>
+                        </div>
+                        <h3 class="card-title">今日活跃</h3>
+                        <p class="card-text text-2xl font-bold">3</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="text-warning mb-2">
+                            <i class="fas fa-clock fa-3x"></i>
+                        </div>
+                        <h3 class="card-title">近期登录</h3>
+                        <p class="card-text text-2xl font-bold">7</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="text-danger mb-2">
+                            <i class="fas fa-lock fa-3x"></i>
+                        </div>
+                        <h3 class="card-title">密码即将过期</h3>
+                        <p class="card-text text-2xl font-bold">2</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作区域 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="flex-grow-1">
+                    <i class="fas fa-user-shield mr-2"></i> 管理员列表
+                </div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-admin-modal">
+                    <i class="fas fa-plus mr-2"></i> 添加管理员
+                </button>
+            </div>
+            <div class="card-body">
+                <!-- 搜索区域 -->
+                <div class="search-box">
+                    <input type="text" class="form-control" id="search-username" placeholder="搜索用户名...">
+                    <select class="form-control" id="search-status">
+                        <option value="all">所有状态</option>
+                        <option value="active">活跃</option>
+                        <option value="inactive">未激活</option>
+                        <option value="locked">已锁定</option>
+                    </select>
+                    <button type="button" class="btn btn-primary" onclick="searchAdmins()">
+                        <i class="fas fa-search mr-2"></i> 搜索
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetSearch()">
+                        <i class="fas fa-sync-alt mr-2"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="exportAdmins()">
+                        <i class="fas fa-file-export mr-2"></i> 导出
+                    </button>
+                </div>
+
+                <!-- 管理员列表 -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="select-all">
+                                        <label class="form-check-label" for="select-all"></label>
+                                    </div>
+                                </th>
+                                <th scope="col">用户名</th>
+                                <th scope="col">角色</th>
+                                <th scope="col">状态</th>
+                                <th scope="col">创建时间</th>
+                                <th scope="col">最后登录</th>
+                                <th scope="col">登录次数</th>
+                                <th scope="col">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admins-table">
+                            <tr>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="admin">
+                                    </div>
+                                </td>
+                                <td>admin</td>
+                                <td>超级管理员</td>
+                                <td><span class="badge bg-success">活跃</span></td>
+                                <td>2024-01-01 00:00:00</td>
+                                <td>2024-01-15 10:30:00</td>
+                                <td>156</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            操作
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit-admin-modal" onclick="prepareEditModal('admin')">编辑信息</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="resetPassword('admin')">重置密码</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="viewLoginLog('admin')">查看登录日志</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="confirmLock('admin')">锁定账户</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="manager">
+                                    </div>
+                                </td>
+                                <td>manager</td>
+                                <td>普通管理员</td>
+                                <td><span class="badge bg-success">活跃</span></td>
+                                <td>2024-01-05 14:20:00</td>
+                                <td>2024-01-14 09:15:00</td>
+                                <td>78</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                            操作
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit-admin-modal" onclick="prepareEditModal('manager')">编辑信息</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="resetPassword('manager')">重置密码</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="viewLoginLog('manager')">查看登录日志</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="confirmDelete('manager')">删除账户</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="analyst">
+                                    </div>
+                                </td>
+                                <td>analyst</td>
+                                <td>分析师</td>
+                                <td><span class="badge bg-warning">未激活</span></td>
+                                <td>2024-01-10 16:45:00</td>
+                                <td>-</td>
+                                <td>0</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                                            操作
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit-admin-modal" onclick="prepareEditModal('analyst')">编辑信息</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="resetPassword('analyst')">重置密码</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="confirmDelete('analyst')">删除账户</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">上一页</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加管理员模态框 -->
+    <div class="modal fade" id="add-admin-modal" tabindex="-1" aria-labelledby="add-admin-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add-admin-modal-label">添加管理员</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-admin-form">
+                        <div class="mb-3">
+                            <label for="new-admin-username" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="new-admin-username" required>
+                            <div class="form-text">用户名必须唯一，不能包含特殊字符</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-admin-email" class="form-label">电子邮箱</label>
+                            <input type="email" class="form-control" id="new-admin-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-admin-role" class="form-label">角色</label>
+                            <select class="form-control" id="new-admin-role">
+                                <option value="admin">超级管理员</option>
+                                <option value="manager">普通管理员</option>
+                                <option value="analyst">分析师</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-admin-password" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="new-admin-password" required>
+                            <div class="form-text">密码长度至少8位，包含字母和数字</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-admin-confirm-password" class="form-label">确认密码</label>
+                            <input type="password" class="form-control" id="new-admin-confirm-password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check-label">状态</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="new-admin-status" id="new-status-active" checked>
+                                <label class="form-check-label" for="new-status-active">激活</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="new-admin-status" id="new-status-inactive">
+                                <label class="form-check-label" for="new-status-inactive">未激活</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addAdmin()">添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑管理员模态框 -->
+    <div class="modal fade" id="edit-admin-modal" tabindex="-1" aria-labelledby="edit-admin-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-admin-modal-label">编辑管理员</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-admin-form">
+                        <div class="mb-3">
+                            <label for="edit-admin-username" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="edit-admin-username" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-admin-email" class="form-label">电子邮箱</label>
+                            <input type="email" class="form-control" id="edit-admin-email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-admin-role" class="form-label">角色</label>
+                            <select class="form-control" id="edit-admin-role">
+                                <option value="admin">超级管理员</option>
+                                <option value="manager">普通管理员</option>
+                                <option value="analyst">分析师</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-admin-password" class="form-label">新密码</label>
+                            <input type="password" class="form-control" id="edit-admin-password" placeholder="留空表示不修改密码">
+                            <div class="form-text">密码长度至少8位，包含字母和数字</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-admin-confirm-password" class="form-label">确认新密码</label>
+                            <input type="password" class="form-control" id="edit-admin-confirm-password" placeholder="留空表示不修改密码">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check-label">状态</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="edit-admin-status" id="edit-status-active">
+                                <label class="form-check-label" for="edit-status-active">激活</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="edit-admin-status" id="edit-status-inactive">
+                                <label class="form-check-label" for="edit-status-inactive">未激活</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="edit-admin-status" id="edit-status-locked">
+                                <label class="form-check-label" for="edit-status-locked">锁定</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAdmin()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登录日志模态框 -->
+    <div class="modal fade" id="login-log-modal" tabindex="-1" aria-labelledby="login-log-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="login-log-modal-label">登录日志</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">登录时间</th>
+                                    <th scope="col">IP地址</th>
+                                    <th scope="col">浏览器</th>
+                                    <th scope="col">操作系统</th>
+                                    <th scope="col">登录结果</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-01-15 10:30:00</td>
+                                    <td>192.168.1.100</td>
+                                    <td>Chrome 120.0</td>
+                                    <td>Windows 10</td>
+                                    <td><span class="badge bg-success">成功</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-14 16:45:00</td>
+                                    <td>192.168.1.100</td>
+                                    <td>Firefox 115.0</td>
+                                    <td>Windows 10</td>
+                                    <td><span class="badge bg-success">成功</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-14 16:43:00</td>
+                                    <td>192.168.1.100</td>
+                                    <td>Firefox 115.0</td>
+                                    <td>Windows 10</td>
+                                    <td><span class="badge bg-danger">失败</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 全选/取消全选
+        document.getElementById('select-all').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // 搜索管理员
+        function searchAdmins() {
+            const username = document.getElementById('search-username').value;
+            const status = document.getElementById('search-status').value;
+            // 这里应该调用API进行搜索
+            console.log('搜索管理员:', username, status);
+            // 模拟搜索成功
+            showSuccess('搜索完成');
+        }
+
+        // 重置搜索
+        function resetSearch() {
+            document.getElementById('search-username').value = '';
+            document.getElementById('search-status').value = 'all';
+            // 这里应该重新加载管理员列表
+            showSuccess('搜索条件已重置');
+        }
+
+        // 导出管理员列表
+        function exportAdmins() {
+            // 这里应该调用API导出数据
+            alert('导出功能已触发');
+        }
+
+        // 准备编辑模态框
+        function prepareEditModal(username) {
+            // 这里应该调用API获取管理员信息并填充表单
+            document.getElementById('edit-admin-username').value = username;
+            // 模拟数据填充
+            if (username === 'admin') {
+                document.getElementById('edit-admin-email').value = 'admin@example.com';
+                document.getElementById('edit-admin-role').value = 'admin';
+                document.getElementById('edit-status-active').checked = true;
+            } else if (username === 'manager') {
+                document.getElementById('edit-admin-email').value = 'manager@example.com';
+                document.getElementById('edit-admin-role').value = 'manager';
+                document.getElementById('edit-status-active').checked = true;
+            } else if (username === 'analyst') {
+                document.getElementById('edit-admin-email').value = 'analyst@example.com';
+                document.getElementById('edit-admin-role').value = 'analyst';
+                document.getElementById('edit-status-inactive').checked = true;
+            }
+        }
+
+        // 添加管理员
+        function addAdmin() {
+            const username = document.getElementById('new-admin-username').value;
+            const email = document.getElementById('new-admin-email').value;
+            const role = document.getElementById('new-admin-role').value;
+            const password = document.getElementById('new-admin-password').value;
+            const confirmPassword = document.getElementById('new-admin-confirm-password').value;
+            const status = document.querySelector('input[name="new-admin-status"]:checked').id === 'new-status-active' ? 'active' : 'inactive';
+
+            // 表单验证
+            if (!username || !email || !password) {
+                showError('请填写所有必填字段');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('两次输入的密码不一致');
+                return;
+            }
+
+            if (password.length < 8 || !/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+                showError('密码长度至少8位，且必须包含字母和数字');
+                return;
+            }
+
+            // 这里应该调用API添加管理员
+            console.log('添加管理员:', { username, email, role, status });
+
+            // 显示成功消息
+            showSuccess('管理员添加成功');
+
+            // 关闭模态框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('add-admin-modal'));
+            modal.hide();
+
+            // 重置表单
+            document.getElementById('add-admin-form').reset();
+        }
+
+        // 更新管理员信息
+        function updateAdmin() {
+            const username = document.getElementById('edit-admin-username').value;
+            const email = document.getElementById('edit-admin-email').value;
+            const role = document.getElementById('edit-admin-role').value;
+            const password = document.getElementById('edit-admin-password').value;
+            const confirmPassword = document.getElementById('edit-admin-confirm-password').value;
+            let status;
+            if (document.getElementById('edit-status-active').checked) status = 'active';
+            else if (document.getElementById('edit-status-inactive').checked) status = 'inactive';
+            else status = 'locked';
+
+            // 表单验证
+            if (!email) {
+                showError('请填写电子邮箱');
+                return;
+            }
+
+            if (password && password !== confirmPassword) {
+                showError('两次输入的密码不一致');
+                return;
+            }
+
+            if (password && (password.length < 8 || !/[a-zA-Z]/.test(password) || !/[0-9]/.test(password))) {
+                showError('密码长度至少8位，且必须包含字母和数字');
+                return;
+            }
+
+            // 这里应该调用API更新管理员
+            console.log('更新管理员:', { username, email, role, status, password: password ? '******' : '未修改' });
+
+            // 显示成功消息
+            showSuccess('管理员信息更新成功');
+
+            // 关闭模态框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('edit-admin-modal'));
+            modal.hide();
+        }
+
+        // 重置密码
+        function resetPassword(username) {
+            if (confirm(`确定要重置用户 ${username} 的密码吗？重置后密码将变为默认密码"123456"`)) {
+                // 这里应该调用API重置密码
+                showSuccess(`用户 ${username} 的密码已重置为默认密码"123456"`);
+            }
+        }
+
+        // 查看登录日志
+        function viewLoginLog(username) {
+            // 这里应该调用API获取登录日志
+            document.getElementById('login-log-modal-label').textContent = `登录日志 - ${username}`;
+            const modal = new bootstrap.Modal(document.getElementById('login-log-modal'));
+            modal.show();
+        }
+
+        // 确认锁定账户
+        function confirmLock(username) {
+            if (confirm(`确定要锁定用户 ${username} 的账户吗？锁定后该用户将无法登录系统。`)) {
+                // 这里应该调用API锁定账户
+                showSuccess(`用户 ${username} 的账户已锁定`);
+            }
+        }
+
+        // 确认删除账户
+        function confirmDelete(username) {
+            if (confirm(`确定要删除用户 ${username} 的账户吗？此操作不可撤销！`)) {
+                // 这里应该调用API删除账户
+                showSuccess(`用户 ${username} 的账户已删除`);
+            }
+        }
+
+        // 显示成功消息
+        function showSuccess(message) {
+            const alert = document.getElementById('success-alert');
+            document.getElementById('success-message').textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // 显示错误消息
+        function showError(message) {
+            const alert = document.getElementById('error-alert');
+            document.getElementById('error-message').textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

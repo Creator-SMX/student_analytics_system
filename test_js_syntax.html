@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript语法测试</title>
+</head>
+<body>
+    <h1>JavaScript语法测试</h1>
+    <script>
+        // 模拟模板变量
+        const mockTopMajor = {"major": "计算机科学", "count": 100};
+        const mockFavoriteLocation = "食堂一楼";
+        const mockFavoriteLocationCount = 500;
+        
+        // 初始化统计数据
+        try {
+            // 处理热门专业数据
+            const topMajorData = mockTopMajor;
+            console.log('Top major data:', topMajorData);
+            
+            if (topMajorData && typeof topMajorData === 'object' && 'major' in topMajorData) {
+                console.log('Major:', topMajorData.major);
+                console.log('Count:', topMajorData.count);
+            }
+            
+            // 处理热门地点数据
+            const favoriteLocation = mockFavoriteLocation;
+            const favoriteLocationCount = mockFavoriteLocationCount;
+            console.log('Favorite location:', favoriteLocation);
+            console.log('Location count:', favoriteLocationCount);
+            
+            if (favoriteLocation && favoriteLocation !== 'None' && favoriteLocation !== null) {
+                console.log('Valid location:', favoriteLocation);
+            }
+        } catch (error) {
+            console.warn('统计数据初始化时出现警告:', error);
+        }
+    </script>
+</body>
+</html>

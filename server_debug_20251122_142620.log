@@ -1,0 +1,8 @@
+2025-11-22 14:26:23,125 - test_server - INFO - 初始化Flask应用...
+2025-11-22 14:26:23,129 - test_server - INFO - 启动测试服务器...
+2025-11-22 14:26:23,129 - test_server - INFO - Python版本: 3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]
+2025-11-22 14:26:23,130 - test_server - CRITICAL - 服务器启动失败: type object 'Flask' has no attribute '__version__'
+Traceback (most recent call last):
+  File "D:\Pycharm\PcData\student_analytics_system\test_server_with_debug.py", line 85, in <module>
+    logger.info(f"Flask版本: {Flask.__version__}")
+AttributeError: type object 'Flask' has no attribute '__version__'

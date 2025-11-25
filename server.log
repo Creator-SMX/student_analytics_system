@@ -1,0 +1,26 @@
+ï»¿ * Serving Flask app 'app'
+ * Debug mode: on
+2025-11-22 14:49:11,257 - app_launcher - INFO - ÒÑ½ûÓÃWindows´íÎó±¨¸æ¶Ô»°¿ò
+2025-11-22 14:49:11,260 - app_launcher - INFO - ======= Ñ§ÉúÏû·Ñ·ÖÎöÏµÍ³Æô¶¯ =======
+2025-11-22 14:49:11,260 - app_launcher - INFO - Python°æ±¾: 3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]
+2025-11-22 14:49:11,260 - app_launcher - INFO - µ±Ç°¹¤×÷Ä¿Â¼: D:\Pycharm\PcData\student_analytics_system
+2025-11-22 14:49:11,261 - app_launcher - INFO - ¿ªÊ¼µ¼ÈëÓ¦ÓÃ...
+2025-11-22 14:49:12,267 - matplotlib - DEBUG - matplotlib data path: D:\ProgramData\Python39\lib\site-packages\matplotlib\mpl-data
+2025-11-22 14:49:12,272 - matplotlib - DEBUG - CONFIGDIR=C:\Users\DELL\.matplotlib
+2025-11-22 14:49:12,275 - matplotlib - DEBUG - interactive is False
+2025-11-22 14:49:12,275 - matplotlib - DEBUG - platform is win32
+2025-11-22 14:49:12,330 - matplotlib - DEBUG - CACHEDIR=C:\Users\DELL\.matplotlib
+2025-11-22 14:49:12,334 - matplotlib.font_manager - DEBUG - Using fontManager instance from C:\Users\DELL\.matplotlib\fontlist-v390.json
+2025-11-22 14:49:13,195 - app_launcher - INFO - Ó¦ÓÃÄ£¿éµ¼Èë³É¹¦
+2025-11-22 14:49:13,196 - app_launcher - INFO - ³É¹¦»ñÈ¡FlaskÓ¦ÓÃÊµÀý
+2025-11-22 14:49:13,196 - app_launcher - INFO - ×¼±¸Æô¶¯Flask·þÎñÆ÷...
+2025-11-22 14:49:13,196 - app_launcher - INFO - ·þÎñÆ÷µØÖ·: http://127.0.0.1:5001/
+2025-11-22 14:49:13,196 - app_launcher - INFO - °´Ctrl+CÍ£Ö¹·þÎñÆ÷
+2025-11-22 14:49:13,196 - app_launcher - INFO - ³õÊ¼»¯Íê³É£¬Æô¶¯·þÎñÆ÷...
+2025-11-22 14:49:13,210 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.3.5:5001
+2025-11-22 14:49:13,210 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-22 14:50:37,522 - app_launcher - INFO - ½ÓÊÕµ½ÐÅºÅ 2£¬ÕýÔÚ°²È«¹Ø±Õ...
+2025-11-22 14:50:37,523 - app_launcher - INFO - ======= Ó¦ÓÃÍË³ö =======

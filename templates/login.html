@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生消费行为分析系统 - 登录</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        success: '#52C41A',
+                        warning: '#FAAD14',
+                        danger: '#F5222D',
+                        info: '#1890FF',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #165DFF 0%, #36CFC9 100%);
+            }
+            .card-shadow {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- 登录卡片 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow">
+            <!-- 顶部渐变 -->
+            <div class="bg-gradient-primary h-2"></div>
+            
+            <!-- 登录表单 -->
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-graduation-cap text-3xl text-primary"></i>
+                    </div>
+                    <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-800">学生消费行为分析系统</h2>
+                    <p class="text-gray-500 mt-2">请登录以继续</p>
+                </div>
+                
+                <!-- 管理员登录标题 -->
+                <div class="mb-6 text-center">
+                    <h3 class="text-lg font-medium text-gray-700">管理员登录</h3>
+                </div>
+                
+                <!-- 错误消息区域 -->
+                <div id="error-message" class="hidden bg-red-50 text-red-500 p-3 rounded-lg mb-6">
+                    <i class="fa fa-exclamation-circle mr-2"></i>
+                    <span id="error-text">错误信息将显示在这里</span>
+                </div>
+                
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <!-- 用户名输入 -->
+                    <div class="mb-4">
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
+                            用户名
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fa fa-user text-gray-400"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all-300"
+                                placeholder="请输入用户名" 
+                                required
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- 密码输入 -->
+                    <div class="mb-6">
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                            密码
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fa fa-lock text-gray-400"></i>
+                            </span>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all-300"
+                                placeholder="请输入密码" 
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                class="absolute inset-y-0 right-0 flex items-center pr-3"
+                                onclick="togglePasswordVisibility()"
+                            >
+                                <i class="fa fa-eye-slash text-gray-400"></i>
+                            </button>
+                        </div>
+                        <p class="mt-2 text-xs text-gray-500">
+                            <i class="fa fa-info-circle mr-1"></i>
+                            管理员账号请联系系统管理员
+                        </p>
+                    </div>
+                    
+                    <!-- 登录按钮 -->
+                    <button 
+                        type="submit" 
+                        class="w-full bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-lg font-medium transition-all-300 flex items-center justify-center"
+                    >
+                        <i class="fa fa-sign-in mr-2"></i>
+                        登录
+                    </button>
+                </form>
+                
+                <!-- 页脚信息 -->
+                <div class="text-center mt-6 text-sm text-gray-500">
+                    <p>© 2024 学生消费行为分析系统</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 移除用户类型切换功能，系统仅支持管理员登录
+        
+        // 切换密码可见性
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = passwordInput.nextElementSibling.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            }
+        }
+        
+        // 显示错误消息
+        function showError(message) {
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            
+            // 5秒后自动隐藏错误消息
+            setTimeout(hideError, 5000);
+        }
+        
+        // 隐藏错误消息
+        function hideError() {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.classList.add('hidden');
+        }
+        
+        // 处理登录
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            console.log('尝试登录，用户名:', username);
+            
+            try {
+                // 显式使用当前端口的完整URL
+                const loginUrl = `${window.location.origin}/auth/login`;
+                console.log('发送登录请求到:', loginUrl);
+                
+                const response = await fetch(loginUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin', // 确保发送Cookie
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                console.log('登录响应状态:', response.status);
+                
+                const result = await response.json();
+                console.log('登录响应结果:', result);
+                
+                if (result.success) {
+                    // 登录成功，跳转到管理员仪表板
+                    console.log('登录成功，准备跳转到仪表板');
+                    window.location.href = '/admin/dashboard';
+                } else {
+                    // 登录失败，显示错误消息
+                    console.error('登录失败:', result.message);
+                    showError(result.message || '用户名或密码错误');
+                }
+            } catch (error) {
+                console.error('登录请求异常:', error);
+                showError('登录请求失败，请检查网络连接');
+            }
+        }
+        
+        // 检查是否已经登录
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/auth/check_login');
+                const result = await response.json();
+                
+                if (result.logged_in) {
+                    // 如果已登录，跳转到管理员仪表板
+                    window.location.href = '/admin/dashboard';
+                }
+            } catch (error) {
+                console.error('检查登录状态失败:', error);
+            }
+        }
+        
+        // 页面加载时检查登录状态
+        window.addEventListener('DOMContentLoaded', checkLoginStatus);
+    </script>
+</body>
+</html>
